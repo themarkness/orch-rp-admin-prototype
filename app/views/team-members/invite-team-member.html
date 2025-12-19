@@ -1,0 +1,59 @@
+{% extends "layouts/main.html" %}
+{% from "components/sidebar.njk" import sidebar %}
+
+{% block pageTitle %}
+  Invite team member – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-m">Manage {{ serviceName }}</h1>
+
+  <hr class="govuk-section-break govuk-section-break--visible">
+
+  <div class="govuk-grid-row">
+    {{ sidebar('team-members') }}
+    <div class="govuk-grid-column-three-quarters">
+      <h1 class="govuk-heading-xl">Invite a team member</h1>
+
+      <form action="/team-members/invite-team-member" method="post">
+
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="email">Email address</label>
+          <input class="govuk-input govuk-!-width-two-thirds" id="email" name="email" type="email" spellcheck="false" autocapitalize="off" autocomplete="email">
+        </div>
+
+        <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+              <h2 class="govuk-fieldset__heading">Permission level</h2>
+            </legend>
+            <div class="govuk-radios" data-module="govuk-radios">
+              <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="permission-admin" name="permission" type="radio" value="administrator">
+                <label class="govuk-label govuk-radios__label" for="permission-admin">
+                  Administrator
+                </label>
+                <div class="govuk-hint govuk-radios__hint">
+                  They can manage team members, edit integration config and view production config
+                </div>
+              </div>
+              <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="permission-view" name="permission" type="radio" value="view">
+                <label class="govuk-label govuk-radios__label" for="permission-view">
+                  View
+                </label>
+                <div class="govuk-hint govuk-radios__hint">
+                  They can view integration and production config
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <button class="govuk-button" data-module="govuk-button">Send invitation</button>
+
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

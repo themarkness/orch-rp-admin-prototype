@@ -13,8 +13,27 @@
   <div class="govuk-grid-row">
     {{ sidebar('team-members') }}
     <div class="govuk-grid-column-three-quarters">
-      <h1 class="govuk-heading-xl">Team members</h1>
-      <p class="govuk-body">This is a placeholder for the team members page.</p>
+      <h1 class="govuk-heading-l govuk-!-margin-top-6"">Team members</h1>
+
+      <a href="/team-members/invite-team-member" class="govuk-button govuk-button--secondary">Invite a team member</a>
+
+      <h2 class="govuk-heading-m">Administrator (1)</h2>
+
+      <table class="govuk-table">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Email</th>
+            <th scope="col" class="govuk-table__header">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">mark.williams2@dsit.gov.uk (me)</td>
+            <td class="govuk-table__cell"><a href="/your-account" class="govuk-link">View my profile</a></td>
+          </tr>
+        </tbody>
+      </table>
+
     </div>
   </div>
 {% endblock %}
