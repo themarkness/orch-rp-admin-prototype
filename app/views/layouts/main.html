@@ -6,11 +6,33 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 {% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
+{% set headerLink = headerLink or "Your account" %}
+{% set headerHref = headerHref or "/your-account" %}
+
 {% block header %}
 
     {{ govukHeader() }}
     {{ govukServiceNavigation({
-        serviceName: serviceName
-    })}}
+    serviceName: "One Login Admin",
+    serviceUrl: "/sign-in",
+    navigation: [
+        {
+        href: "/features",
+        text: "Features"
+        },
+        {
+        href: "#",
+        text: "Documentation"
+        },
+        {
+        href: "#",
+        text: "Support"
+        },
+        {
+        href: headerHref,
+        text: headerLink
+        }
+    ]
+    }) }}
 
 {% endblock %}
