@@ -64,8 +64,8 @@
 
   <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">Client ID</dt>
-    <dd class="govuk-summary-list__value"><code>{{ integration.clientId }}</code></dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/clientId">Change</a></dd>
+    <dd class="govuk-summary-list__value"><code style="color: #d13118; background-color: #f3f2f1;">{{ integration.clientId }}</code></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('clientId', 'integration'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
@@ -127,19 +127,19 @@
   <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">Name</dt>
     <dd class="govuk-summary-list__value">{{ production.name }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('name'); return false;">Copy</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('name', 'production'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">Client ID</dt>
-    <dd class="govuk-summary-list__value"><code>{{ production.clientId }}</code></dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('clientId'); return false;">Copy</a></dd>
+    <dd class="govuk-summary-list__value"><code style="color: #d13118; background-color: #f3f2f1;">{{ production.clientId }}</code></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('clientId', 'production'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">Contacts</dt>
     <dd class="govuk-summary-list__value">{{ production.contacts }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('contacts'); return false;">Copy</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('contacts', 'production'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
@@ -149,7 +149,7 @@
       <div>{{ u }}</div>
       {% endfor %}
     </dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('redirectUris'); return false;">Copy</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('redirectUris', 'production'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
@@ -159,25 +159,25 @@
       <div>{{ u }}</div>
       {% endfor %}
     </dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('postLogoutRedirectUris'); return false;">Copy</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('postLogoutRedirectUris', 'production'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">Scopes</dt>
     <dd class="govuk-summary-list__value">{{ production.scopes | join(', ') }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('scopes'); return false;">Copy</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('scopes', 'production'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">Authentication method</dt>
     <dd class="govuk-summary-list__value">{{ production.authMethod }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('authMethod'); return false;">Copy</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('authMethod', 'production'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">ID token signing algorithm</dt>
     <dd class="govuk-summary-list__value">{{ production.idTokenAlg }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('idTokenAlg'); return false;">Copy</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('idTokenAlg', 'production'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
@@ -185,15 +185,17 @@
     <dd class="govuk-summary-list__value">
       <div class="govuk-body" style="font-family: monospace; white-space: pre-wrap;">{{ production.publicKey }}</div>
     </dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('publicKey'); return false;">Copy</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('publicKey', 'production'); return false;">Copy</a></dd>
   </div>
 </div>
 
 <script>
+const integration = {{ integration | dump | safe }};
 const production = {{ production | dump | safe }};
 
-function copyField(field) {
-  let value = production[field];
+function copyField(field, env) {
+  const data = env === 'integration' ? integration : production;
+  let value = data[field];
   if (Array.isArray(value)) {
     value = value.join('\n');  // For arrays like URIs, join with newlines for readability
   }
