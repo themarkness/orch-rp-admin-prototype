@@ -11,7 +11,7 @@ This is a prototype built using the GOV.UK Prototype Kit.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/themarkness/codespaces-blank.git
+   git clone https://github.com/themarkness/rp-admin-tool-protoype.git
    cd codespaces-blank
    ```
 
