@@ -1,0 +1,71 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  GOV.UK page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-l">
+        Features
+      </h1>
+
+      <p>
+        The GOV.UK One Login Admin Tool lets government service teams set up, manage and maintain their One Login integrations independently.
+      </p>
+      <h2 class="govuk-heading-m">What you can do now (Beta)</h2>
+      <h3 class="govuk-heading-s">Set up your integration</h3>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Create a new integration environment configuration</li>
+        <li>Generate and manage your API credentials</li>
+        <li>Configure redirect URIs and basic client settings</li> 
+      </ul>
+      
+      <h3 class="govuk-heading-s">Manage your integration</h3>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>View your integration environment settings</li>
+        <li>Update configuration values as your service develops</li>
+        <li>Access your client ID and authentication details</li>
+      </ul>
+      
+      <hr class="govuk-section-break govuk-section-break--visible">
+
+      <h2 class="govuk-heading-m">Things we're working on next</h2>
+      
+      <p class="govuk-body">We're currenty working with Relying Partys to update the admin tool to better meet your needs. Here's what's coming up:</p>
+
+      <h3 class="govuk-heading-s">Multi-user access</h3>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Add team members to manage your integration</li>
+        <li>Keep your service running when people move on</li>
+        <li>See who has access and what they can do</li>
+      </ul>
+
+      <h3 class="govuk-heading-s">Better configuration management</h3>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Manage more client registry settings directly</li>
+        <li>View your production configuration (read-only)</li>
+        <li>Compare your integration and production settings</li>
+      </ul>
+
+      <h3 class="govuk-heading-s">Transparency and audit</h3>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>See a history of changes to your configuration</li>
+        <li>Know who changed what and when</li>
+      </ul>
+      
+     <hr class="govuk-section-break govuk-section-break--visible">
+
+      <h2 class="govuk-heading-m">Things we want to explore later </h2>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Promoting changes to production</li>
+        <li>Organisation level management</li>
+        <li>Support for multiple test environments</li>
+      </ul>
+    </div>
+  </div>
+
+{% endblock %}
