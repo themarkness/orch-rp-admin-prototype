@@ -12,13 +12,16 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Your services</h1>
-        <p class="govuk-body">Manage your services below.</p>
+        <p class="govuk-body">View and manage your services below</p>
 
-        <ul class="govuk-list govuk-list--bullet">
-          {% for service in services %}
-          <li><a class="govuk-link" href="{{ service.link }}">{{ service.name }}</a></li>
-          {% endfor %}
-        </ul>
+        <hr class="govuk-section-break govuk-section-break--visible">
+        {% for service in services %}
+        <p class="govuk-body-m">
+        <a class="govuk-link govuk-link--no-underline govuk-!-font-weight-bold" href="{{ service.link }}" >{{ service.name }}</a>
+        </p>
+        <hr class="govuk-section-break govuk-section-break--visible">
+        {% endfor %}
+ 
 
         <button class="govuk-button govuk-button--secondary">Add a new service</button>
       </div>
