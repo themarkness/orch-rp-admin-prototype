@@ -1,0 +1,205 @@
+{% extends "layouts/main.html" %}
+{% from "components/sidebar.njk" import sidebar %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+
+{% block pageTitle %}
+  Client configuration – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-m">Manage {{ serviceName }}</h1>
+
+  <hr class="govuk-section-break govuk-section-break--visible">
+
+  {% if saved %}
+    <div class="govuk-notification-banner govuk-notification-banner--success" role="region" aria-labelledby="saved-banner-title" data-module="govuk-notification-banner">
+      <div class="govuk-notification-banner__header">
+        <h2 class="govuk-notification-banner__title" id="saved-banner-title">
+          Success
+        </h2>
+      </div>
+      <div class="govuk-notification-banner__content">
+        <p class="govuk-notification-banner__heading">
+          Changes saved
+        </p>
+        <p class="govuk-body">Your Integration configuration changes have been applied (prototype only).</p>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="govuk-grid-row">
+    {{ sidebar('client-configuration') }}
+    <div class="govuk-grid-column-three-quarters">
+
+      {{ govukTabs({
+        items: [
+          {
+            label: "Integration",
+            id: "integration",
+            panel: {
+              html: integrationTab
+            }
+          },
+          {
+            label: "Production (read only)",
+            id: "production",
+            panel: {
+              html: productionTab
+            }
+          }
+        ]
+      }) }}
+
+    </div>
+  </div>
+{% endblock %}
+
+{% set integrationTab %}
+<div class="govuk-summary-list">
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Name</dt>
+    <dd class="govuk-summary-list__value">{{ serviceName }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/name">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Client ID</dt>
+    <dd class="govuk-summary-list__value"><code>{{ integration.clientId }}</code></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/clientId">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Contacts</dt>
+    <dd class="govuk-summary-list__value">{{ integration.contacts }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/contacts">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Redirect URIs</dt>
+    <dd class="govuk-summary-list__value">
+      {% for u in integration.redirectUris %}
+      <div>{{ u }}</div>
+      {% endfor %}
+    </dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/redirectUris">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Post logout redirect URIs</dt>
+    <dd class="govuk-summary-list__value">
+      {% for u in integration.postLogoutRedirectUris %}
+      <div>{{ u }}</div>
+      {% endfor %}
+    </dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/postLogoutRedirectUris">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Scopes</dt>
+    <dd class="govuk-summary-list__value">{{ integration.scopes | join(', ') }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/scopes">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Authentication method</dt>
+    <dd class="govuk-summary-list__value">{{ integration.authMethod }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/authMethod">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">ID token signing algorithm</dt>
+    <dd class="govuk-summary-list__value">{{ integration.idTokenAlg }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/idTokenAlg">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Public key</dt>
+    <dd class="govuk-summary-list__value">
+      <div class="govuk-body" style="font-family: monospace; white-space: pre-wrap;">{{ integration.publicKey }}</div>
+    </dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/publicKey">Change</a></dd>
+  </div>
+</div>
+{% endset %}
+
+{% set productionTab %}
+<div class="govuk-summary-list">
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Name</dt>
+    <dd class="govuk-summary-list__value">{{ production.name }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('name'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Client ID</dt>
+    <dd class="govuk-summary-list__value"><code>{{ production.clientId }}</code></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('clientId'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Contacts</dt>
+    <dd class="govuk-summary-list__value">{{ production.contacts }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('contacts'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Redirect URIs</dt>
+    <dd class="govuk-summary-list__value">
+      {% for u in production.redirectUris %}
+      <div>{{ u }}</div>
+      {% endfor %}
+    </dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('redirectUris'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Post logout redirect URIs</dt>
+    <dd class="govuk-summary-list__value">
+      {% for u in production.postLogoutRedirectUris %}
+      <div>{{ u }}</div>
+      {% endfor %}
+    </dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('postLogoutRedirectUris'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Scopes</dt>
+    <dd class="govuk-summary-list__value">{{ production.scopes | join(', ') }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('scopes'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Authentication method</dt>
+    <dd class="govuk-summary-list__value">{{ production.authMethod }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('authMethod'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">ID token signing algorithm</dt>
+    <dd class="govuk-summary-list__value">{{ production.idTokenAlg }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('idTokenAlg'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Public key</dt>
+    <dd class="govuk-summary-list__value">
+      <div class="govuk-body" style="font-family: monospace; white-space: pre-wrap;">{{ production.publicKey }}</div>
+    </dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('publicKey'); return false;">Copy</a></dd>
+  </div>
+</div>
+
+<script>
+const production = {{ production | dump | safe }};
+
+function copyField(field) {
+  let value = production[field];
+  if (Array.isArray(value)) {
+    value = value.join('\n');  // For arrays like URIs, join with newlines for readability
+  }
+  navigator.clipboard.writeText(value).then(() => {
+    alert(`${field} copied to clipboard!`);
+  });
+}
+</script>
+{% endset %}
