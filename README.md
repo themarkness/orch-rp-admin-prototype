@@ -1,6 +1,8 @@
 # GOV.UK Prototype
 
-This is a prototype built using the GOV.UK Prototype Kit.
+This is a prototype built using the [GOV.UK Prototype Kit](https://github.com/alphagov/govuk-prototype-kit/).
+
+It prototypes possible use cases for RPs
 
 ## Prerequisites
 
