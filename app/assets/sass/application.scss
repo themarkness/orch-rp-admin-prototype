@@ -4,3 +4,10 @@
 // 
 
 // Add extra styles here
+.govuk-service-navigation__list .govuk-service-navigation__item:last-child {
+  margin-left: auto; /* Pushes this item to the far right */
+}
+
+hr.govuk-section-break.govuk-section-break--visible {
+  margin-bottom: 15px; /* Add some space below section breaks */
+}

@@ -1,5 +1,5 @@
 {
-  "serviceName": "Service name goes here",
+  "serviceName": "One Login Admin",
   "plugins": {
     "govuk-frontend": {
       "rebrand": true
