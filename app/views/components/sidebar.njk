@@ -1,0 +1,17 @@
+{% macro sidebar(current) %}
+<div class="govuk-grid-column-one-quarter">
+  <p class="govuk-body-m">
+    <a href="/client-configuration" class="govuk-link govuk-link--no-underline{% if current == 'client-configuration' %} govuk-!-font-weight-bold{% endif %}">Client configuration</a>
+  </p>
+    <p class="govuk-body-m">
+    <a href="/settings" class="govuk-link govuk-link--no-underline{% if current == 'settings' %} govuk-!-font-weight-bold{% endif %}">Settings</a>
+  </p>
+  <p class="govuk-body-m">
+    <a href="/team-members" class="govuk-link govuk-link--no-underline{% if current == 'team-members' %} govuk-!-font-weight-bold{% endif %}">Team members</a>
+  </p>
+  <hr class="govuk-section-break govuk-section-break--visible">
+  <p class="govuk-body-m">
+    <a href="/make-live" class="govuk-link govuk-link--no-underline">Make your service live</a>
+  </p>
+</div>
+{% endmacro %}
