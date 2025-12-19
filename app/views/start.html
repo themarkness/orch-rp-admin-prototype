@@ -1,0 +1,26 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageName="Home" %}
+{% set headerLink = "Sign in" %}
+{% set headerHref = "/sign-in" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-xl">
+      One Login Admin Tool
+    </h1>
+    <p class="govuk-body">The GOV.UK One Login Admin Tool lets government service teams set up, manage and maintain their One Login integrations independently.</p>
+    
+    {{ govukButton({
+      text: "Create an account",
+      href: "/sign-in"
+    }) }}
+    
+  </div>
+</div>
+
+{% endblock %}

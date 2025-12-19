@@ -1,0 +1,24 @@
+{% extends "layouts/main.html" %}
+
+{% set headerLink = "Sign in" %}
+{% set headerHref = "/sign-in" %}
+
+{% block pageTitle %}
+  GOV.UK page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+<div class="text-confirmation">
+    <form action="/client-configuration" method="post">
+        <p>Check your mobile phone</p>
+        <p>We sent a code to: <strong>*******6334</strong></p>
+        <p>It might take a few minutes to arrive. The code will expire after 15 minutes.</p>
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="security-code">Enter the 6 digit security code</label>
+            <input class="govuk-input govuk-input--width-10" type="text" id="security-code" name="security-code" maxlength="6" required>
+        </div>
+        <button class="govuk-button" type="submit">Continue</button>
+    </form>
+    <p><a href="#">Problems receiving a text message?</a></p>
+</div>
+{% endblock %}
