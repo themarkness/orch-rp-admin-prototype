@@ -1,0 +1,20 @@
+{% extends "layouts/main.html" %}
+{% from "components/sidebar.njk" import sidebar %}
+
+{% block pageTitle %}
+  Team members – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-m">Manage {{ serviceName }}</h1>
+
+  <hr class="govuk-section-break govuk-section-break--visible">
+
+  <div class="govuk-grid-row">
+    {{ sidebar('team-members') }}
+    <div class="govuk-grid-column-three-quarters">
+      <h1 class="govuk-heading-xl">Team members</h1>
+      <p class="govuk-body">This is a placeholder for the team members page.</p>
+    </div>
+  </div>
+{% endblock %}

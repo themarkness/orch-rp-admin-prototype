@@ -1,0 +1,30 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Your services – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-width-container">
+  <main class="govuk-main-wrapper" id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Your services</h1>
+        <p class="govuk-body">Manage your services below.</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          {% for service in services %}
+          <li><a class="govuk-link" href="{{ service.link }}">{{ service.name }}</a></li>
+          {% endfor %}
+        </ul>
+
+        <button class="govuk-button govuk-button--secondary">Add a new service</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+{% endblock %}

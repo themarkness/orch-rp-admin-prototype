@@ -1,0 +1,57 @@
+{% extends "layouts/main.html" %}
+{% from "components/sidebar.njk" import sidebar %}
+
+{% block pageTitle %}
+  Settings – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-m">Manage {{ serviceName }}</h1>
+
+  <hr class="govuk-section-break govuk-section-break--visible">
+
+  {% if saved %}
+    <div class="govuk-notification-banner govuk-notification-banner--success" role="region" aria-labelledby="saved-banner-title" data-module="govuk-notification-banner">
+      <div class="govuk-notification-banner__header">
+        <h2 class="govuk-notification-banner__title" id="saved-banner-title">
+          Success
+        </h2>
+      </div>
+      <div class="govuk-notification-banner__content">
+        <p class="govuk-notification-banner__heading">
+          Changes saved
+        </p>
+        <p class="govuk-body">Your Integration configuration changes have been applied (prototype only).</p>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="govuk-grid-row">
+    {{ sidebar('settings') }}
+    <div class="govuk-grid-column-three-quarters">
+
+      <h2 class="govuk-heading-m govuk-!-margin-top-6">Service details</h2>
+
+      <div class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">Name</dt>
+          <dd class="govuk-summary-list__value">{{ serviceName }}</dd>
+          <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/name">Change</a></dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">Client ID</dt>
+          <dd class="govuk-summary-list__value"><code>{{ integration.clientId }}</code></dd>
+          <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/clientId">Change</a></dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">Contacts</dt>
+          <dd class="govuk-summary-list__value">{{ integration.contacts }}</dd>
+          <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/contacts">Change</a></dd>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
