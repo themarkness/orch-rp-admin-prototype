@@ -1,0 +1,346 @@
+{% extends "layouts/main.html" %}
+{% from "components/sidebar.njk" import sidebar %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% block pageTitle %}
+  Audit log – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-m">Manage {{ serviceName }}</h1>
+
+  <hr class="govuk-section-break govuk-section-break--visible">
+
+  <div class="govuk-grid-row">
+    {{ sidebar('audit-log') }}
+    <div class="govuk-grid-column-three-quarters">
+
+      <h1 class="govuk-heading-l govuk-!-margin-top-6">Audit log</h1>
+
+      <p class="govuk-body">This log shows all configuration changes made to your service. Each entry records who made the change, what was changed, and when.</p>
+
+      <table class="govuk-table">
+        <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">
+          Configuration change history
+        </caption>
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Date and time</th>
+            <th scope="col" class="govuk-table__header">User</th>
+            <th scope="col" class="govuk-table__header">Action</th>
+            <th scope="col" class="govuk-table__header">Field</th>
+            <th scope="col" class="govuk-table__header">Changes</th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">22 Dec 2025<br>14:32:15</td>
+            <td class="govuk-table__cell">sarah.jones@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Updated",
+                classes: "govuk-tag--blue"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">Scopes</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <strong>Previous value:</strong><br>
+                  <code>openid, email, phone</code>
+                  <br><br>
+                  <strong>New value:</strong><br>
+                  <code>openid, email, phone, profile</code>
+                </div>
+              </details>
+            </td>
+          </tr>
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">21 Dec 2025<br>09:15:42</td>
+            <td class="govuk-table__cell">james.williams@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Updated",
+                classes: "govuk-tag--blue"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">Redirect URIs</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <strong>Previous value:</strong><br>
+                  <code>https://example.service.gov.uk/callback</code>
+                  <br><br>
+                  <strong>New value:</strong><br>
+                  <code>https://example.service.gov.uk/callback<br>https://example.service.gov.uk/auth/callback</code>
+                </div>
+              </details>
+            </td>
+          </tr>
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">20 Dec 2025<br>16:47:23</td>
+            <td class="govuk-table__cell">sarah.jones@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Updated",
+                classes: "govuk-tag--blue"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">Public key</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  Public key was rotated for security purposes.
+                </div>
+              </details>
+            </td>
+          </tr>
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">19 Dec 2025<br>11:22:08</td>
+            <td class="govuk-table__cell">admin@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Added",
+                classes: "govuk-tag--green"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">Team member</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  Added james.williams@example.gov.uk with Admin permissions
+                </div>
+              </details>
+            </td>
+          </tr>
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">18 Dec 2025<br>14:05:31</td>
+            <td class="govuk-table__cell">sarah.jones@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Updated",
+                classes: "govuk-tag--blue"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">Authentication method</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <strong>Previous value:</strong><br>
+                  <code>client_secret_post</code>
+                  <br><br>
+                  <strong>New value:</strong><br>
+                  <code>private_key_jwt</code>
+                </div>
+              </details>
+            </td>
+          </tr>
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">17 Dec 2025<br>10:18:55</td>
+            <td class="govuk-table__cell">admin@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Updated",
+                classes: "govuk-tag--blue"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">Contacts</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <strong>Previous value:</strong><br>
+                  <code>support@example.gov.uk</code>
+                  <br><br>
+                  <strong>New value:</strong><br>
+                  <code>technical-support@example.gov.uk</code>
+                </div>
+              </details>
+            </td>
+          </tr>
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">16 Dec 2025<br>09:30:12</td>
+            <td class="govuk-table__cell">sarah.jones@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Updated",
+                classes: "govuk-tag--blue"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">Post logout redirect URIs</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <strong>Previous value:</strong><br>
+                  <code>https://example.service.gov.uk/</code>
+                  <br><br>
+                  <strong>New value:</strong><br>
+                  <code>https://example.service.gov.uk/<br>https://example.service.gov.uk/signed-out</code>
+                </div>
+              </details>
+            </td>
+          </tr>
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">15 Dec 2025<br>15:42:09</td>
+            <td class="govuk-table__cell">admin@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Removed",
+                classes: "govuk-tag--red"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">Team member</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  Removed former.employee@example.gov.uk
+                </div>
+              </details>
+            </td>
+          </tr>
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">12 Dec 2025<br>13:15:27</td>
+            <td class="govuk-table__cell">sarah.jones@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Updated",
+                classes: "govuk-tag--blue"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">ID token signing algorithm</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <strong>Previous value:</strong><br>
+                  <code>RS256</code>
+                  <br><br>
+                  <strong>New value:</strong><br>
+                  <code>ES256</code>
+                </div>
+              </details>
+            </td>
+          </tr>
+
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">10 Dec 2025<br>08:45:33</td>
+            <td class="govuk-table__cell">admin@example.gov.uk</td>
+            <td class="govuk-table__cell">
+              {{ govukTag({
+                text: "Created",
+                classes: "govuk-tag--green"
+              }) }}
+            </td>
+            <td class="govuk-table__cell">Service</td>
+            <td class="govuk-table__cell">
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    View changes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  Service "{{ serviceName }}" was created in the integration environment
+                </div>
+              </details>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <nav class="govuk-pagination" aria-label="Pagination">
+        <div class="govuk-pagination__prev">
+          <a class="govuk-link govuk-pagination__link" href="#" rel="prev">
+            <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+              <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+            </svg>
+            <span class="govuk-pagination__link-title">
+              Previous<span class="govuk-visually-hidden"> page</span>
+            </span>
+          </a>
+        </div>
+        <ul class="govuk-pagination__list">
+          <li class="govuk-pagination__item govuk-pagination__item--current">
+            <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 1" aria-current="page">
+              1
+            </a>
+          </li>
+          <li class="govuk-pagination__item">
+            <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 2">
+              2
+            </a>
+          </li>
+          <li class="govuk-pagination__item">
+            <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 3">
+              3
+            </a>
+          </li>
+        </ul>
+        <div class="govuk-pagination__next">
+          <a class="govuk-link govuk-pagination__link" href="#" rel="next">
+            <span class="govuk-pagination__link-title">
+              Next<span class="govuk-visually-hidden"> page</span>
+            </span>
+            <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+              <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+            </svg>
+          </a>
+        </div>
+      </nav>
+
+    </div>
+  </div>
+{% endblock %}
