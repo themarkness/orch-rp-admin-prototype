@@ -154,13 +154,163 @@ router.get('/services', function (req, res) {
 	const services = [
 		{
 			name: "Mark's test service 2",
-			link: "/settings"
+			link: "/dashboard"
 		}
 	]
 	res.render('services', { services: services })
 })
 
+// Dashboard
+router.get('/dashboard', function (req, res) {
+	const serviceName = req.session.serviceName || "Mark's test service 2"
+	res.render('analytics-dashboard', { serviceName: serviceName })
+})
+
 // Team members page
 router.get('/team-members', function (req, res) {
 	res.render('team-members')
+})
+
+// Go-live checklist page
+router.get('/make-live', function (req, res) {
+	// Initialize go-live checklist in session if it doesn't exist
+	if (!req.session.goLiveChecklist) {
+		req.session.goLiveChecklist = {
+			integrationComplete: false,
+			redirectUrls: false,
+			scopes: false,
+			teamMember: false,
+			agreement: false
+		}
+	}
+
+	const serviceName = req.session.serviceName || "Mark's test service 2"
+	res.render('go-live-checklist', {
+		serviceName: serviceName,
+		goLiveChecklist: req.session.goLiveChecklist
+	})
+})
+
+// Integration complete task
+router.get('/make-live/integration-complete', function (req, res) {
+	const serviceName = req.session.serviceName || "Mark's test service 2"
+	res.render('make-live-integration-complete', {
+		serviceName: serviceName,
+		goLiveChecklist: req.session.goLiveChecklist || {}
+	})
+})
+
+router.post('/make-live/integration-complete', function (req, res) {
+	if (!req.session.goLiveChecklist) {
+		req.session.goLiveChecklist = {}
+	}
+	req.session.goLiveChecklist.integrationComplete = req.body.integrationComplete === 'yes'
+	res.redirect('/make-live')
+})
+
+// Redirect URLs task
+router.get('/make-live/redirect-urls', function (req, res) {
+	const serviceName = req.session.serviceName || "Mark's test service 2"
+	const production = req.session.production || {}
+
+	res.render('make-live-redirect-urls', {
+		serviceName: serviceName,
+		redirectUrls: (production.redirectUrls || []).join('\n'),
+		postLogoutRedirectUrls: (production.postLogoutRedirectUrls || []).join('\n')
+	})
+})
+
+router.post('/make-live/redirect-urls', function (req, res) {
+	if (!req.session.goLiveChecklist) {
+		req.session.goLiveChecklist = {}
+	}
+	if (!req.session.production) {
+		req.session.production = {}
+	}
+
+	const redirectUrls = (req.body.redirectUrls || '').split('\n').map(s => s.trim()).filter(Boolean)
+	const postLogoutRedirectUrls = (req.body.postLogoutRedirectUrls || '').split('\n').map(s => s.trim()).filter(Boolean)
+
+	req.session.production.redirectUrls = redirectUrls
+	req.session.production.postLogoutRedirectUrls = postLogoutRedirectUrls
+
+	// Mark as complete if at least one redirect URL is provided
+	req.session.goLiveChecklist.redirectUrls = redirectUrls.length > 0
+
+	res.redirect('/make-live')
+})
+
+// Scopes task
+router.get('/make-live/scopes', function (req, res) {
+	const serviceName = req.session.serviceName || "Mark's test service 2"
+	const production = req.session.production || {}
+
+	res.render('make-live-scopes', {
+		serviceName: serviceName,
+		scopes: production.scopes || []
+	})
+})
+
+router.post('/make-live/scopes', function (req, res) {
+	if (!req.session.goLiveChecklist) {
+		req.session.goLiveChecklist = {}
+	}
+	if (!req.session.production) {
+		req.session.production = {}
+	}
+
+	let scopes = ['openid'] // openid is always included
+
+	if (req.body.scopes) {
+		// Handle both single value and array
+		const selectedScopes = Array.isArray(req.body.scopes) ? req.body.scopes : [req.body.scopes]
+		scopes = scopes.concat(selectedScopes)
+	}
+
+	req.session.production.scopes = scopes
+	req.session.goLiveChecklist.scopes = true
+
+	res.redirect('/make-live')
+})
+
+// Team member task
+router.get('/make-live/team-member', function (req, res) {
+	const serviceName = req.session.serviceName || "Mark's test service 2"
+	res.render('make-live-team-member', {
+		serviceName: serviceName,
+		goLiveChecklist: req.session.goLiveChecklist || {}
+	})
+})
+
+router.post('/make-live/team-member', function (req, res) {
+	if (!req.session.goLiveChecklist) {
+		req.session.goLiveChecklist = {}
+	}
+	req.session.goLiveChecklist.teamMember = req.body.teamMember === 'yes'
+	res.redirect('/make-live')
+})
+
+// Agreement task
+router.get('/make-live/agreement', function (req, res) {
+	const serviceName = req.session.serviceName || "Mark's test service 2"
+	res.render('make-live-agreement', {
+		serviceName: serviceName,
+		goLiveChecklist: req.session.goLiveChecklist || {}
+	})
+})
+
+router.post('/make-live/agreement', function (req, res) {
+	if (!req.session.goLiveChecklist) {
+		req.session.goLiveChecklist = {}
+	}
+	req.session.goLiveChecklist.agreement = req.body.agreement === 'accepted'
+	res.redirect('/make-live')
+})
+
+// Send request to go live
+router.get('/make-live/request', function (req, res) {
+	const serviceName = req.session.serviceName || "Mark's test service 2"
+	res.render('make-live-request', {
+		serviceName: serviceName
+	})
 })

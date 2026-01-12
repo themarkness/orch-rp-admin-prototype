@@ -1,6 +1,9 @@
 {% macro sidebar(current) %}
 <div class="govuk-grid-column-one-quarter">
   <p class="govuk-body-m">
+    <a href="/dashboard" class="govuk-link govuk-link--no-underline{% if current == 'dashboard' %} govuk-!-font-weight-bold{% endif %}">Dashboard</a>
+  </p>
+  <p class="govuk-body-m">
     <a href="/client-configuration" class="govuk-link govuk-link--no-underline{% if current == 'client-configuration' %} govuk-!-font-weight-bold{% endif %}">Client configuration</a>
   </p>
     <p class="govuk-body-m">
@@ -14,7 +17,7 @@
   </p>
   <hr class="govuk-section-break govuk-section-break--visible">
   <p class="govuk-body-m">
-    <a href="/make-live" class="govuk-link govuk-link--no-underline">Make your service live</a>
+    <a href="/make-live" class="govuk-link govuk-link--no-underline{% if current == 'go-live-checklist' %} govuk-!-font-weight-bold{% endif %}">Make your service live</a>
   </p>
 </div>
 {% endmacro %}
