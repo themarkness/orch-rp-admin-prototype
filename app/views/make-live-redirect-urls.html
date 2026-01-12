@@ -1,0 +1,62 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% block pageTitle %}
+  Update your production redirect URLs – Make your service live – {{ serviceName }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <form method="post" action="/make-live/redirect-urls">
+
+        <h1 class="govuk-heading-l">Update your production redirect URLs</h1>
+
+        <p class="govuk-body">Your redirect URLs must be production URLs. They cannot include localhost or test domains.</p>
+
+        {{ govukInsetText({
+          text: "Example: https://your-service.service.gov.uk/auth/callback"
+        }) }}
+
+        {{ govukTextarea({
+          name: "redirectUrls",
+          id: "redirect-urls",
+          label: {
+            text: "Production redirect URLs"
+          },
+          hint: {
+            text: "Enter one URL per line"
+          },
+          value: redirectUrls,
+          rows: 5
+        }) }}
+
+        {{ govukTextarea({
+          name: "postLogoutRedirectUrls",
+          id: "post-logout-redirect-urls",
+          label: {
+            text: "Post logout redirect URLs"
+          },
+          hint: {
+            text: "Enter one URL per line"
+          },
+          value: postLogoutRedirectUrls,
+          rows: 3
+        }) }}
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Save and continue"
+          }) }}
+
+          <a class="govuk-link" href="/make-live">Cancel</a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "layouts/main.html" %}
+{% from "components/sidebar.njk" import sidebar %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}
+  Make your service live – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-m">Manage {{ serviceName }}</h1>
+
+  <hr class="govuk-section-break govuk-section-break--visible">
+
+  <div class="govuk-grid-row">
+    {{ sidebar('go-live-checklist') }}
+    <div class="govuk-grid-column-three-quarters">
+
+      <h1 class="govuk-heading-xl govuk-!-margin-top-6">Make your service live</h1>
+
+      <p class="govuk-body">To remove the integration environment restrictions and make your service live:</p>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>Complete the tasks on this page.</li>
+        <li>Select 'Send a request to go live'</li>
+      </ol>
+
+      <p class="govuk-body">It can take up to one working day to make a service live. This is because we need to check that it meets our requirements.</p>
+
+      <h2 class="govuk-heading-l govuk-!-margin-top-8">Your service</h2>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      <div class="checklist-item">
+        <div class="checklist-item-text">
+          <a href="/make-live/integration-complete" class="govuk-link">Confirm your integration is complete</a>
+        </div>
+        <div class="checklist-item-status">
+          {% if goLiveChecklist.integrationComplete %}
+            <strong>Completed</strong>
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">Incomplete</strong>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      <div class="checklist-item">
+        <div class="checklist-item-text">
+          <a href="/make-live/redirect-urls" class="govuk-link">Update your production redirect URLs</a>
+        </div>
+        <div class="checklist-item-status">
+          {% if goLiveChecklist.redirectUrls %}
+            <strong>Completed</strong>
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">Incomplete</strong>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      <div class="checklist-item">
+        <div class="checklist-item-text">
+          <a href="/make-live/scopes" class="govuk-link">Configure your scopes</a>
+        </div>
+        <div class="checklist-item-status">
+          {% if goLiveChecklist.scopes %}
+            <strong>Completed</strong>
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">Incomplete</strong>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      <div class="checklist-item">
+        <div class="checklist-item-text">
+          <a href="/make-live/team-member" class="govuk-link">Give another team member the 'manage settings' permission</a>
+        </div>
+        <div class="checklist-item-status">
+          {% if goLiveChecklist.teamMember %}
+            <strong>Completed</strong>
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">Incomplete</strong>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      <h2 class="govuk-heading-l govuk-!-margin-top-8">Your organisation</h2>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      <div class="checklist-item">
+        <div class="checklist-item-text">
+          <a href="/make-live/agreement" class="govuk-link">Accept the memorandum of understanding</a>
+        </div>
+        <div class="checklist-item-status">
+          {% if goLiveChecklist.agreement %}
+            <strong>Completed</strong>
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">Incomplete</strong>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      {% set allComplete = goLiveChecklist.integrationComplete and goLiveChecklist.redirectUrls and goLiveChecklist.scopes and goLiveChecklist.teamMember and goLiveChecklist.agreement %}
+
+      {% if not allComplete %}
+        <p class="govuk-body govuk-!-margin-top-8">You must complete all the tasks before you can send a request to go live.</p>
+      {% endif %}
+
+      {{ govukButton({
+        text: "Send a request to go live",
+        href: "/make-live/request" if allComplete else "#",
+        disabled: not allComplete,
+        classes: "govuk-!-margin-top-6"
+      }) }}
+
+    </div>
+  </div>
+
+  <style>
+    .checklist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+    }
+
+    .checklist-item-text {
+      flex: 1;
+    }
+
+    .checklist-item-status {
+      text-align: right;
+      margin-left: 20px;
+    }
+  </style>
+{% endblock %}

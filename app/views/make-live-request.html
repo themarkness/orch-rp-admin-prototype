@@ -1,0 +1,48 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}
+  Request sent – Make your service live – {{ serviceName }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      {{ govukPanel({
+        titleText: "Request sent",
+        html: "Your reference number is<br><strong>HDJ2123F</strong>"
+      }) }}
+
+      <h2 class="govuk-heading-m">What happens next</h2>
+
+      <p class="govuk-body">We've sent your request to the GOV.UK One Login team.</p>
+
+      <p class="govuk-body">They will review your request and contact you within 1 working day.</p>
+
+      <p class="govuk-body">They may:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>approve your request and provide your production client ID</li>
+        <li>contact you if they need more information</li>
+        <li>ask you to make changes to your configuration</li>
+      </ul>
+
+      <h2 class="govuk-heading-m govuk-!-margin-top-8">Once approved</h2>
+
+      <p class="govuk-body">You'll receive:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>your production client ID</li>
+        <li>details of the production endpoint</li>
+        <li>instructions for deploying your service</li>
+      </ul>
+
+      <p class="govuk-body">
+        <a href="/dashboard" class="govuk-link">Return to dashboard</a>
+      </p>
+
+    </div>
+  </div>
+{% endblock %}

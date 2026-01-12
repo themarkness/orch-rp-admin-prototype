@@ -1,0 +1,52 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}
+  Confirm your integration is complete – Make your service live – {{ serviceName }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <form method="post" action="/make-live/integration-complete">
+
+        {{ govukRadios({
+          name: "integrationComplete",
+          fieldset: {
+            legend: {
+              text: "Confirm your integration is complete",
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          hint: {
+            text: "You must have successfully tested your integration in the integration environment before moving to production."
+          },
+          items: [
+            {
+              value: "yes",
+              text: "Yes, I have completed my integration testing",
+              checked: goLiveChecklist.integrationComplete
+            },
+            {
+              value: "no",
+              text: "No, I still need to complete testing"
+            }
+          ]
+        }) }}
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Save and continue"
+          }) }}
+
+          <a class="govuk-link" href="/make-live">Cancel</a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

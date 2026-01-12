@@ -1,0 +1,57 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% block pageTitle %}
+  Accept the memorandum of understanding – Make your service live – {{ serviceName }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <form method="post" action="/make-live/agreement">
+
+        <h1 class="govuk-heading-l">Accept the memorandum of understanding</h1>
+
+        <p class="govuk-body">Before going live, you must accept the memorandum of understanding (MoU) between your organisation and GDS.</p>
+
+        <p class="govuk-body">The MoU covers:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>Service level agreements</li>
+          <li>Data processing responsibilities</li>
+          <li>Security requirements</li>
+          <li>Support arrangements</li>
+        </ul>
+
+        {{ govukWarningText({
+          text: "By accepting, you confirm you have the authority to enter into this agreement on behalf of your organisation.",
+          iconFallbackText: "Warning"
+        }) }}
+
+        {{ govukCheckboxes({
+          name: "agreement",
+          items: [
+            {
+              value: "accepted",
+              text: "I have read and accept the memorandum of understanding",
+              checked: goLiveChecklist.agreement
+            }
+          ]
+        }) }}
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Save and continue"
+          }) }}
+
+          <a class="govuk-link" href="/make-live">Cancel</a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

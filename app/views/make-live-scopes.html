@@ -1,0 +1,75 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% block pageTitle %}
+  Configure your scopes – Make your service live – {{ serviceName }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <form method="post" action="/make-live/scopes">
+
+        <h1 class="govuk-heading-l">Configure your scopes</h1>
+
+        <p class="govuk-body">Scopes define what information your service can request from GOV.UK One Login.</p>
+
+        {{ govukInsetText({
+          html: "<code>openid</code> is required and will be included automatically."
+        }) }}
+
+        {{ govukCheckboxes({
+          name: "scopes",
+          fieldset: {
+            legend: {
+              text: "Select the scopes your service needs",
+              classes: "govuk-fieldset__legend--m"
+            }
+          },
+          hint: {
+            text: "Select all that apply."
+          },
+          items: [
+            {
+              value: "email",
+              text: "Email address",
+              hint: {
+                text: "Request the user's email address"
+              },
+              checked: scopes and 'email' in scopes
+            },
+            {
+              value: "phone",
+              text: "Phone number",
+              hint: {
+                text: "Request the user's phone number"
+              },
+              checked: scopes and 'phone' in scopes
+            },
+            {
+              value: "profile",
+              text: "Profile",
+              hint: {
+                text: "Request basic profile information"
+              },
+              checked: scopes and 'profile' in scopes
+            }
+          ]
+        }) }}
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Save and continue"
+          }) }}
+
+          <a class="govuk-link" href="/make-live">Cancel</a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+{% endblock %}
