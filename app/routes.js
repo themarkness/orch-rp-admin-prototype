@@ -268,7 +268,7 @@ router.get('/services/:uid/dashboard', function (req, res) {
 	}
 
 	const service = req.session.userServices[uid]
-	res.render('analytics-dashboard', { serviceName: service.name })
+	res.render('analytics-dashboard', { serviceName: service.name, serviceUid: uid })
 })
 
 // Service client configuration
@@ -362,6 +362,59 @@ router.post('/services/:uid/client-configuration/change/:field', function (req, 
 	}
 
 	res.redirect(`/services/${uid}/client-configuration?saved=true`)
+})
+
+// Service settings page
+router.get('/services/:uid/settings', function (req, res) {
+	const uid = req.params.uid
+
+	if (!req.session.userServices || !req.session.userServices[uid]) {
+		return res.status(404).render('error', { message: 'Service not found' })
+	}
+
+	const service = req.session.userServices[uid]
+	const integration = service.integration
+	const production = service.production
+
+	res.render('settings', {
+		integration: integration,
+		production: production,
+		saved: !!req.query.saved,
+		serviceName: service.name,
+		serviceUid: uid
+	})
+})
+
+// Service audit log page
+router.get('/services/:uid/audit-log', function (req, res) {
+	const uid = req.params.uid
+
+	if (!req.session.userServices || !req.session.userServices[uid]) {
+		return res.status(404).render('error', { message: 'Service not found' })
+	}
+
+	const service = req.session.userServices[uid]
+
+	res.render('audit-log', {
+		serviceName: service.name,
+		serviceUid: uid
+	})
+})
+
+// Service features page
+router.get('/services/:uid/features', function (req, res) {
+	const uid = req.params.uid
+
+	if (!req.session.userServices || !req.session.userServices[uid]) {
+		return res.status(404).render('error', { message: 'Service not found' })
+	}
+
+	const service = req.session.userServices[uid]
+
+	res.render('features', {
+		serviceName: service.name,
+		serviceUid: uid
+	})
 })
 
 // Team members page for specific service
