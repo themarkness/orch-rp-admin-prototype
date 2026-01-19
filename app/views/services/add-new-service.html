@@ -1,0 +1,37 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Add a new service – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-width-container">
+  <main class="govuk-main-wrapper" id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Add your service name</h1>
+        <p class="govuk-body">Add the name of the service you want to test with GOV.UK One Login.</p>
+        <p class="govuk-body govuk-!-font-weight-bold">This is only seen by you. You can change it later.</p>
+
+        <form action="/services/add-new-service" method="post">
+
+          <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--m" for="service-name">Service name</label>
+            <input class="govuk-input govuk-!-width-two-thirds" id="service-name" name="service-name" type="text" autocomplete="off" required>
+          </div>
+
+          <div class="govuk-button-group">
+            <button class="govuk-button" data-module="govuk-button">Continue</button>
+            <a class="govuk-link" href="/services">Cancel</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+{% endblock %}
