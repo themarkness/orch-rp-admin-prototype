@@ -172,51 +172,126 @@ router.get('/services', function (req, res) {
 	res.render('services', { services: services })
 })
 
-// Add new service page
+// Create service journey - start page
 router.get('/services/add-new-service', function (req, res) {
-	res.render('services/add-new-service')
+	res.redirect('/services/create/start-page')
 })
 
-// Handle add new service form submission
-router.post('/services/add-new-service', function (req, res) {
-	const serviceName = req.body['service-name']
+router.get('/services/create/start-page', function (req, res) {
+	res.render('services/create/start-page')
+})
+
+// Step 1: Enter client name
+router.get('/services/create/enter-client-name', function (req, res) {
+	res.render('services/create/enter-client-name')
+})
+
+router.post('/services/create/enter-client-name', function (req, res) {
+	req.session.data = req.session.data || {}
+	req.session.data.clientName = req.body.clientName
+	res.redirect('/services/create/select-key-type')
+})
+
+// Step 2: Select key type
+router.get('/services/create/select-key-type', function (req, res) {
+	res.render('services/create/select-key-type')
+})
+
+router.post('/services/create/select-key-type', function (req, res) {
+	req.session.data = req.session.data || {}
+	req.session.data.publicKeyType = req.body.publicKeyType
+	req.session.data.jwksEndpoint = req.body.jwksEndpoint
+	req.session.data.staticKey = req.body.staticKey
+	req.session.data.clientSecret = req.body.clientSecret
+	res.redirect('/services/create/redirect-urls')
+})
+
+// Step 3: Redirect URLs
+router.get('/services/create/redirect-urls', function (req, res) {
+	res.render('services/create/redirect-urls')
+})
+
+router.post('/services/create/redirect-urls', function (req, res) {
+	req.session.data = req.session.data || {}
+	req.session.data.redirectUrls = req.body.redirectUrls
+	res.redirect('/services/create/select-scopes')
+})
+
+// Step 4: Select scopes
+router.get('/services/create/select-scopes', function (req, res) {
+	res.render('services/create/select-scopes')
+})
+
+router.post('/services/create/select-scopes', function (req, res) {
+	req.session.data = req.session.data || {}
+	req.session.data.selectedScopes = req.body.selectedScopes || []
+	res.redirect('/services/create/confirm')
+})
+
+// Step 5: Confirm and create
+router.get('/services/create/confirm', function (req, res) {
+	res.render('services/create/confirm')
+})
+
+router.post('/services/create/confirm', function (req, res) {
+	const serviceName = req.session.data.clientName
 	
 	if (!serviceName) {
-		return res.render('services/add-new-service', {
-			errors: ['Service name is required']
-		})
+		return res.redirect('/services/create/enter-client-name')
 	}
 
-	// Initialize session data for services if not present
 	if (!req.session.userServices) {
 		req.session.userServices = {}
 	}
 
 	const serviceUid = generateUUID()
 
-	// Create new service with sensible defaults
+	// Parse scopes
+	let scopes = ['openid']
+	if (req.session.data.selectedScopes) {
+		const selectedScopes = Array.isArray(req.session.data.selectedScopes) 
+			? req.session.data.selectedScopes 
+			: [req.session.data.selectedScopes]
+		scopes = scopes.concat(selectedScopes)
+	}
+
+	// Parse redirect URLs
+	const redirectUrls = req.session.data.redirectUrls 
+		? req.session.data.redirectUrls.split(',').map(s => s.trim()).filter(Boolean)
+		: []
+
+	// Determine auth method and public key
+	let authMethod = 'private_key_jwt'
+	let publicKey = ''
+	if (req.session.data.publicKeyType === 'Client secret') {
+		authMethod = 'client_secret_post'
+		publicKey = req.session.data.clientSecret || ''
+	} else if (req.session.data.publicKeyType === 'Public key URL (JWKS)') {
+		publicKey = req.session.data.jwksEndpoint || ''
+	} else if (req.session.data.publicKeyType === 'Fixed public key') {
+		publicKey = req.session.data.staticKey || ''
+	}
+
 	const newService = {
 		uid: serviceUid,
 		name: serviceName,
 		created: new Date().toISOString(),
-		// Integration config (editable)
 		integration: {
 			name: serviceName + ' (integration)',
 			clientId: 'client-id-' + serviceUid.substr(0, 13),
 			contacts: '',
-			redirectUris: [],
+			redirectUris: redirectUrls,
 			postLogoutRedirectUris: [],
 			sectorIdentifierUri: '',
 			maxAgeEnabled: false,
 			landingPageUri: '',
-			scopes: ['openid', 'email'], // Default scopes
+			scopes: scopes,
 			proveUsersIdentities: false,
-			enforcePKCE: true, // Security best practice
-			authMethod: 'private_key_jwt', // Secure default
-			publicKey: '',
+			enforcePKCE: true,
+			authMethod: authMethod,
+			publicKey: publicKey,
 			idTokenAlg: 'ES256'
 		},
-		// Production config (read-only in UI, but stored for reference)
 		production: {
 			name: serviceName + ' (production)',
 			clientId: 'client-id-prod-' + serviceUid.substr(0, 8),
@@ -233,7 +308,6 @@ router.post('/services/add-new-service', function (req, res) {
 			publicKey: '',
 			idTokenAlg: 'ES256'
 		},
-		// Go-live checklist
 		goLiveChecklist: {
 			integrationComplete: false,
 			redirectUrls: false,
@@ -244,6 +318,9 @@ router.post('/services/add-new-service', function (req, res) {
 	}
 
 	req.session.userServices[serviceUid] = newService
+
+	// Clear the creation data
+	req.session.data = {}
 
 	res.redirect(`/services/${serviceUid}`)
 })
