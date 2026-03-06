@@ -3,7 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block pageTitle %}
-  Give another team member the 'manage settings' permission – Make your service live – {{ serviceName }}
+  Add another Admin to your service – Make your service live – {{ serviceName }}
 {% endblock %}
 
 {% block content %}
@@ -16,23 +16,23 @@
           name: "teamMember",
           fieldset: {
             legend: {
-              text: "Give another team member the 'manage settings' permission",
+              text: "Does your service have 2 or more Admins?",
               isPageHeading: true,
               classes: "govuk-fieldset__legend--l"
             }
           },
           hint: {
-            text: "This ensures your service can still be managed if you're unavailable. At least 2 team members should have manage settings permission."
+            text: "This ensures your service can still be managed if you're unavailable. At least 2 team members should have the Admin role."
           },
           items: [
             {
               value: "yes",
-              text: "Yes, another team member has manage settings permission",
+              text: "Yes, we have 2 or more Admins",
               checked: goLiveChecklist.teamMember
             },
             {
               value: "no",
-              text: "No, I need to add another team member first"
+              text: "No, I need to add another Admin first"
             }
           ]
         }) }}
