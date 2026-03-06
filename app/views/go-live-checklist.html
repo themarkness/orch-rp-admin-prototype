@@ -26,6 +26,14 @@
 
       <p class="govuk-body">It can take up to one working day to make a service live. This is because we need to check that it meets our requirements.</p>
 
+      <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+          <span class="govuk-warning-text__assistive">Warning</span>
+          You must configure your service for production at least 2 weeks before you start using the production environment.
+        </strong>
+      </div>
+
       <h2 class="govuk-heading-l govuk-!-margin-top-8">Your service</h2>
 
       <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
@@ -77,6 +85,36 @@
 
       <div class="checklist-item">
         <div class="checklist-item-text">
+          <a href="/make-live/public-key" class="govuk-link">Upload your public key (if using private_key_jwt)</a>
+        </div>
+        <div class="checklist-item-status">
+          {% if goLiveChecklist.publicKey %}
+            <strong>Completed</strong>
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">Incomplete</strong>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      <div class="checklist-item">
+        <div class="checklist-item-text">
+          <a href="/make-live/sector-identifier" class="govuk-link">Confirm your sector identifier</a>
+        </div>
+        <div class="checklist-item-status">
+          {% if goLiveChecklist.sectorIdentifier %}
+            <strong>Completed</strong>
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">Incomplete</strong>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      <div class="checklist-item">
+        <div class="checklist-item-text">
           <a href="/make-live/team-member" class="govuk-link">Give another team member the 'manage settings' permission</a>
         </div>
         <div class="checklist-item-status">
@@ -109,7 +147,7 @@
 
       <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-      {% set allComplete = goLiveChecklist.integrationComplete and goLiveChecklist.redirectUrls and goLiveChecklist.scopes and goLiveChecklist.teamMember and goLiveChecklist.agreement %}
+      {% set allComplete = goLiveChecklist.integrationComplete and goLiveChecklist.redirectUrls and goLiveChecklist.scopes and goLiveChecklist.publicKey and goLiveChecklist.sectorIdentifier and goLiveChecklist.teamMember and goLiveChecklist.agreement %}
 
       {% if not allComplete %}
         <p class="govuk-body govuk-!-margin-top-8">You must complete all the tasks before you can send a request to go live.</p>
