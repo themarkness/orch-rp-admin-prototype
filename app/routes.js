@@ -325,7 +325,7 @@ router.post('/services/create/confirm', function (req, res) {
 	res.redirect(`/services/${serviceUid}`)
 })
 
-// Get single service - redirect to dashboard
+// Get single service - redirect to client-configuration
 router.get('/services/:uid', function (req, res) {
 	const uid = req.params.uid
 
@@ -333,19 +333,7 @@ router.get('/services/:uid', function (req, res) {
 		return res.status(404).render('error', { message: 'Service not found' })
 	}
 
-	res.redirect(`/services/${uid}/dashboard`)
-})
-
-// Service dashboard
-router.get('/services/:uid/dashboard', function (req, res) {
-	const uid = req.params.uid
-
-	if (!req.session.userServices || !req.session.userServices[uid]) {
-		return res.status(404).render('error', { message: 'Service not found' })
-	}
-
-	const service = req.session.userServices[uid]
-	res.render('analytics-dashboard', { serviceName: service.name, serviceUid: uid })
+	res.redirect(`/services/${uid}/client-configuration`)
 })
 
 // Service client configuration
@@ -573,7 +561,7 @@ router.get('/dashboard', function (req, res) {
 	}
 
 	const firstUid = Object.keys(req.session.userServices)[0]
-	res.redirect(`/services/${firstUid}/dashboard`)
+	res.redirect(`/services/${firstUid}/client-configuration`)
 })
 
 // Go-live checklist page
