@@ -11,3 +11,35 @@
 hr.govuk-section-break.govuk-section-break--visible {
   margin-bottom: 15px; /* Add some space below section breaks */
 }
+
+.journey-card {
+  border-left: 4px solid #1d70b8;
+  padding: 20px;
+  margin-bottom: 30px;
+  background: #f3f2f1;
+}
+
+.journey-steps {
+  padding-left: 0;
+}
+
+.journey-steps li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1d70b8;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}

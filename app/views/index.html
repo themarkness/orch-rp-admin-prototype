@@ -17,23 +17,83 @@
 
     {% include "govuk-prototype-kit/includes/homepage-bottom.njk" %}
 
-    <h2 class="govuk-heading-m">Prototype Pages</h2>
+    <p class="govuk-body-l">Use the journeys below to test the prototype. Each journey describes a scenario and the pages involved.</p>
 
-    <ul class="govuk-list">
-      <li><a href="/start" class="govuk-link">Start</a> - Begin the main process flow</li>
-      <li><a href="/sign-in" class="govuk-link">Sign in</a> - Authenticate existing users</li>
-      <li><a href="/register" class="govuk-link">Register</a> - Create a new account</li>
-      <li><a href="/client-configuration" class="govuk-link">Client Configuration</a> - Configure client settings</li>
-      <li><a href="/clients-change" class="govuk-link">Clients Change</a> - Modify client information</li>
-      <li><a href="/features" class="govuk-link">Features</a> - View available features</li>
-      <li><a href="/services" class="govuk-link">Services</a> - Manage services</li>
-      <li><a href="/settings" class="govuk-link">Settings</a> - Adjust application settings</li>
-      <li><a href="/team-members" class="govuk-link">Team Members</a> - Manage team members</li>
-      <li><a href="/team-members/invite-team-member" class="govuk-link">Invite Team Member</a> - Send invitations to new team members</li>
-      <li><a href="/your-account" class="govuk-link">Your Account</a> - View and edit account details</li>
-      <li><a href="/sign-in/enter-text-code" class="govuk-link">Enter Text Code</a> - Verify identity via SMS security code</li>
-      <li><a href="/audit-log" class="govuk-link">Audit Log</a> - View history of configuration changes</li>
-      <li><a href="/dashboard" class="govuk-link">Dashboard</a> - View performance metrics and analytics for One Login integration</li>
+    {# ── Journey 1: New user ── #}
+    <div class="journey-card">
+      <h2 class="govuk-heading-m">Journey 1: New user registers and creates a service</h2>
+      <p class="govuk-body govuk-!-color-secondary">When I need to integrate my service with One Login, I want to create an admin account and register my service, so that I can start configuring my integration.</p>
+      <ol class="govuk-list journey-steps">
+        <li><span class="step-number">1</span> <a href="/start" class="govuk-link">Start page</a> — landing page with "Create an account" button</li>
+        <li><span class="step-number">2</span> <a href="/register" class="govuk-link">Create an account</a> — name, email, mobile, password</li>
+        <li><span class="step-number">3</span> <a href="/services" class="govuk-link">Your services</a> — empty state, click "Add a new service"</li>
+        <li><span class="step-number">4</span> <a href="/services/create/start-page" class="govuk-link">Create a service</a> — overview of what you'll need</li>
+        <li><span class="step-number">5</span> <a href="/services/create/enter-client-name" class="govuk-link">Enter service name</a></li>
+        <li><span class="step-number">6</span> <a href="/services/create/select-key-type" class="govuk-link">Select authentication method</a> — JWKS, static key, or client secret</li>
+        <li><span class="step-number">7</span> <a href="/services/create/redirect-urls" class="govuk-link">Add redirect URLs</a></li>
+        <li><span class="step-number">8</span> <a href="/services/create/select-scopes" class="govuk-link">Select scopes</a> — choose user information needed</li>
+        <li><span class="step-number">9</span> <a href="/services/create/confirm" class="govuk-link">Check your answers</a> — review and create service</li>
+      </ol>
+      <a href="/start" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0">Start this journey</a>
+    </div>
+
+    {# ── Journey 2: Returning user ── #}
+    <div class="journey-card">
+      <h2 class="govuk-heading-m">Journey 2: Returning user signs in and manages a service</h2>
+      <p class="govuk-body govuk-!-color-secondary">When I already have an account, I want to sign in and update my service configuration, so that I can keep my integration up to date.</p>
+      <ol class="govuk-list journey-steps">
+        <li><span class="step-number">1</span> <a href="/start" class="govuk-link">Start page</a></li>
+        <li><span class="step-number">2</span> <a href="/sign-in" class="govuk-link">Sign in</a> — email and password</li>
+        <li><span class="step-number">3</span> <a href="/sign-in/enter-text-code" class="govuk-link">Enter security code</a> — SMS verification</li>
+        <li><span class="step-number">4</span> <a href="/services" class="govuk-link">Your services</a> — select a service to manage</li>
+        <li><span class="step-number">5</span> <a href="/client-configuration" class="govuk-link">Client configuration</a> — integration and production tabs</li>
+      </ol>
+      <p class="govuk-body govuk-!-margin-top-2">From client configuration, you can change individual fields:</p>
+      <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-4">
+        <li>Text/textarea fields (name, public key, contacts, etc.)</li>
+        <li>Radio selections (auth method, key type, boolean toggles)</li>
+        <li>Checkbox selections (scopes, claims, levels of confidence)</li>
+        <li>URL lists with add/remove (redirect URIs, logout URIs)</li>
+      </ul>
+      <a href="/sign-in" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0">Start this journey</a>
+    </div>
+
+    {# ── Journey 3: Go live ── #}
+    <div class="journey-card">
+      <h2 class="govuk-heading-m">Journey 3: Make a service live</h2>
+      <p class="govuk-body govuk-!-color-secondary">When my integration is ready, I want to complete the go-live checklist and submit a request, so that my service can move to production.</p>
+      <p class="govuk-body"><strong>Note:</strong> These pages are accessed via the sidebar within a service (e.g. /services/:uid/make-live). The links below use backward-compatible routes that redirect to the first service.</p>
+      <ol class="govuk-list journey-steps">
+        <li><span class="step-number">1</span> <a href="/make-live" class="govuk-link">Go-live checklist</a> — task list with completion status</li>
+        <li><span class="step-number">2</span> <a href="/make-live/integration-complete" class="govuk-link">Confirm integration is complete</a></li>
+        <li><span class="step-number">3</span> <a href="/make-live/redirect-urls" class="govuk-link">Update production redirect URLs</a></li>
+        <li><span class="step-number">4</span> <a href="/make-live/scopes" class="govuk-link">Configure production scopes</a></li>
+        <li><span class="step-number">5</span> <a href="/make-live/team-member" class="govuk-link">Confirm 2+ admins on the service</a></li>
+        <li><span class="step-number">6</span> <a href="/make-live/agreement" class="govuk-link">Accept memorandum of understanding</a></li>
+        <li><span class="step-number">7</span> <a href="/make-live/request" class="govuk-link">Request sent</a> — confirmation panel</li>
+      </ol>
+      <a href="/make-live" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0">Start this journey</a>
+    </div>
+
+    {# ── Journey 4: Team & account management ── #}
+    <div class="journey-card">
+      <h2 class="govuk-heading-m">Journey 4: Manage team and account</h2>
+      <p class="govuk-body govuk-!-color-secondary">When I need to collaborate with colleagues, I want to invite team members and manage account settings, so that the right people have access.</p>
+      <ol class="govuk-list journey-steps">
+        <li><span class="step-number">1</span> <a href="/your-account" class="govuk-link">Your account</a> — personal details and sign out</li>
+        <li><span class="step-number">2</span> <a href="/team-members" class="govuk-link">Team members</a> — list of current members</li>
+        <li><span class="step-number">3</span> <a href="/team-members/invite-team-member" class="govuk-link">Invite a team member</a> — email and permission level</li>
+        <li><span class="step-number">4</span> <a href="/settings" class="govuk-link">Settings</a> — service name, client ID, contacts</li>
+        <li><span class="step-number">5</span> <a href="/audit-log" class="govuk-link">Audit log</a> — history of configuration changes</li>
+      </ol>
+      <a href="/your-account" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0">Start this journey</a>
+    </div>
+
+    {# ── Other pages ── #}
+    <h2 class="govuk-heading-m govuk-!-margin-top-6">Other pages</h2>
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a href="/features" class="govuk-link">Features</a> — what the admin tool can do now and what's coming next</li>
+      <li><a href="/services/add-new-service" class="govuk-link">Add a new service</a> — alternative entry point (redirects to create wizard)</li>
     </ul>
 
   </div>
