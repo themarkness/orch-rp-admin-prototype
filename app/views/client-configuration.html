@@ -54,12 +54,14 @@
   </div>
 {% endblock %}
 
+{% set changeBase %}{% if serviceUid %}/services/{{ serviceUid }}/client-configuration/change{% else %}/client-configuration/change{% endif %}{% endset %}
+
 {% set integrationTab %}
 <div class="govuk-summary-list">
   <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">Name</dt>
     <dd class="govuk-summary-list__value">{{ serviceName }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/name">Change</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/name">Change</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
@@ -69,9 +71,23 @@
   </div>
 
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Contacts</dt>
-    <dd class="govuk-summary-list__value">{{ integration.contacts }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/contacts">Change</a></dd>
+    <dt class="govuk-summary-list__key">Public key type</dt>
+    <dd class="govuk-summary-list__value">{{ integration.publicKeyType or 'private_key_jwt' }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/publicKeyType">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Public key</dt>
+    <dd class="govuk-summary-list__value">
+      <div class="govuk-body" style="font-family: monospace; white-space: pre-wrap;">{{ integration.publicKey }}</div>
+    </dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/publicKey">Change</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Scopes</dt>
+    <dd class="govuk-summary-list__value">{{ integration.scopes | join(', ') }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/scopes">Change</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
@@ -81,45 +97,147 @@
       <div>{{ u }}</div>
       {% endfor %}
     </dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/redirectUris">Change</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/redirectUris">Change</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Post logout redirect URIs</dt>
-    <dd class="govuk-summary-list__value">
-      {% for u in integration.postLogoutRedirectUris %}
-      <div>{{ u }}</div>
-      {% endfor %}
-    </dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/postLogoutRedirectUris">Change</a></dd>
-  </div>
-
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Scopes</dt>
-    <dd class="govuk-summary-list__value">{{ integration.scopes | join(', ') }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/scopes">Change</a></dd>
-  </div>
-
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Authentication method</dt>
+    <dt class="govuk-summary-list__key">Token authentication method</dt>
     <dd class="govuk-summary-list__value">{{ integration.authMethod }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/authMethod">Change</a></dd>
-  </div>
-
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">ID token signing algorithm</dt>
-    <dd class="govuk-summary-list__value">{{ integration.idTokenAlg }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/idTokenAlg">Change</a></dd>
-  </div>
-
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Public key</dt>
-    <dd class="govuk-summary-list__value">
-      <div class="govuk-body" style="font-family: monospace; white-space: pre-wrap;">{{ integration.publicKey }}</div>
-    </dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="/client-configuration/change/publicKey">Change</a></dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/authMethod">Change</a></dd>
   </div>
 </div>
+
+<details class="govuk-details">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">Identity fields</span>
+  </summary>
+  <div class="govuk-details__text">
+    <div class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Identity verification supported</dt>
+        <dd class="govuk-summary-list__value">{{ integration.identityVerificationSupported | string }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/identityVerificationSupported">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Claims</dt>
+        <dd class="govuk-summary-list__value">
+          {% for c in integration.claims %}
+          <div>{{ c }}</div>
+          {% endfor %}
+        </dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/claims">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Landing page URL</dt>
+        <dd class="govuk-summary-list__value">{{ integration.landingPageUri }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/landingPageUri">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Levels of confidence</dt>
+        <dd class="govuk-summary-list__value">{{ integration.levelsOfConfidence | join(', ') }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/levelsOfConfidence">Change</a></dd>
+      </div>
+    </div>
+  </div>
+</details>
+
+<details class="govuk-details">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">Optional fields</span>
+  </summary>
+  <div class="govuk-details__text">
+    <div class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">ID token signing algorithm</dt>
+        <dd class="govuk-summary-list__value">{{ integration.idTokenAlg }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/idTokenAlg">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Contacts</dt>
+        <dd class="govuk-summary-list__value">{{ integration.contacts }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/contacts">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Is active</dt>
+        <dd class="govuk-summary-list__value">{{ integration.isActive | string }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/isActive">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Post logout redirect URIs</dt>
+        <dd class="govuk-summary-list__value">
+          {% for u in integration.postLogoutRedirectUris %}
+          <div>{{ u }}</div>
+          {% endfor %}
+        </dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/postLogoutRedirectUris">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Back channel logout URIs</dt>
+        <dd class="govuk-summary-list__value">
+          {% for u in integration.backChannelLogoutUris %}
+          <div>{{ u }}</div>
+          {% endfor %}
+        </dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/backChannelLogoutUris">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Sector identifier URI</dt>
+        <dd class="govuk-summary-list__value">{{ integration.sectorIdentifierUri }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/sectorIdentifierUri">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Service type</dt>
+        <dd class="govuk-summary-list__value">{{ integration.serviceType or 'MANDATORY' }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/serviceType">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">JAR validation required</dt>
+        <dd class="govuk-summary-list__value">{{ integration.jarValidationRequired | string }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/jarValidationRequired">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Channel</dt>
+        <dd class="govuk-summary-list__value">{{ integration.channel or 'web' }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/channel">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">PKCE enforced</dt>
+        <dd class="govuk-summary-list__value">{{ integration.enforcePKCE | string }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/enforcePKCE">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Max age enabled</dt>
+        <dd class="govuk-summary-list__value">{{ integration.maxAgeEnabled | string }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/maxAgeEnabled">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Permit missing nonce</dt>
+        <dd class="govuk-summary-list__value">{{ integration.permitMissingNonce | string }}</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/permitMissingNonce">Change</a></dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Rate limit</dt>
+        <dd class="govuk-summary-list__value">{{ integration.rateLimit or '2000' }} per minute</dd>
+        <dd class="govuk-summary-list__actions"><a class="govuk-link" href="{{ changeBase }}/rateLimit">Change</a></dd>
+      </div>
+    </div>
+  </div>
+</details>
 {% endset %}
 
 {% set productionTab %}
@@ -137,9 +255,23 @@
   </div>
 
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Contacts</dt>
-    <dd class="govuk-summary-list__value">{{ production.contacts }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('contacts', 'production'); return false;">Copy</a></dd>
+    <dt class="govuk-summary-list__key">Public key type</dt>
+    <dd class="govuk-summary-list__value">{{ production.publicKeyType or 'private_key_jwt' }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('publicKeyType', 'production'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Public key</dt>
+    <dd class="govuk-summary-list__value">
+      <div class="govuk-body" style="font-family: monospace; white-space: pre-wrap;">{{ production.publicKey }}</div>
+    </dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('publicKey', 'production'); return false;">Copy</a></dd>
+  </div>
+
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Scopes</dt>
+    <dd class="govuk-summary-list__value">{{ production.scopes | join(', ') }}</dd>
+    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('scopes', 'production'); return false;">Copy</a></dd>
   </div>
 
   <div class="govuk-summary-list__row">
@@ -153,41 +285,111 @@
   </div>
 
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Post logout redirect URIs</dt>
-    <dd class="govuk-summary-list__value">
-      {% for u in production.postLogoutRedirectUris %}
-      <div>{{ u }}</div>
-      {% endfor %}
-    </dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('postLogoutRedirectUris', 'production'); return false;">Copy</a></dd>
-  </div>
-
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Scopes</dt>
-    <dd class="govuk-summary-list__value">{{ production.scopes | join(', ') }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('scopes', 'production'); return false;">Copy</a></dd>
-  </div>
-
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Authentication method</dt>
+    <dt class="govuk-summary-list__key">Token authentication method</dt>
     <dd class="govuk-summary-list__value">{{ production.authMethod }}</dd>
     <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('authMethod', 'production'); return false;">Copy</a></dd>
   </div>
-
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">ID token signing algorithm</dt>
-    <dd class="govuk-summary-list__value">{{ production.idTokenAlg }}</dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('idTokenAlg', 'production'); return false;">Copy</a></dd>
-  </div>
-
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Public key</dt>
-    <dd class="govuk-summary-list__value">
-      <div class="govuk-body" style="font-family: monospace; white-space: pre-wrap;">{{ production.publicKey }}</div>
-    </dd>
-    <dd class="govuk-summary-list__actions"><a class="govuk-link" href="#" onclick="copyField('publicKey', 'production'); return false;">Copy</a></dd>
-  </div>
 </div>
+
+<details class="govuk-details">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">Identity fields</span>
+  </summary>
+  <div class="govuk-details__text">
+    <div class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Identity verification supported</dt>
+        <dd class="govuk-summary-list__value">{{ production.identityVerificationSupported | string }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Claims</dt>
+        <dd class="govuk-summary-list__value">
+          {% for c in production.claims %}
+          <div>{{ c }}</div>
+          {% endfor %}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Landing page URL</dt>
+        <dd class="govuk-summary-list__value">{{ production.landingPageUri }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Levels of confidence</dt>
+        <dd class="govuk-summary-list__value">{{ production.levelsOfConfidence | join(', ') }}</dd>
+      </div>
+    </div>
+  </div>
+</details>
+
+<details class="govuk-details">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">Optional fields</span>
+  </summary>
+  <div class="govuk-details__text">
+    <div class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">ID token signing algorithm</dt>
+        <dd class="govuk-summary-list__value">{{ production.idTokenAlg }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Contacts</dt>
+        <dd class="govuk-summary-list__value">{{ production.contacts }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Is active</dt>
+        <dd class="govuk-summary-list__value">{{ production.isActive | string }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Post logout redirect URIs</dt>
+        <dd class="govuk-summary-list__value">
+          {% for u in production.postLogoutRedirectUris %}
+          <div>{{ u }}</div>
+          {% endfor %}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Back channel logout URIs</dt>
+        <dd class="govuk-summary-list__value">
+          {% for u in production.backChannelLogoutUris %}
+          <div>{{ u }}</div>
+          {% endfor %}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Sector identifier URI</dt>
+        <dd class="govuk-summary-list__value">{{ production.sectorIdentifierUri }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Service type</dt>
+        <dd class="govuk-summary-list__value">{{ production.serviceType or 'MANDATORY' }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">JAR validation required</dt>
+        <dd class="govuk-summary-list__value">{{ production.jarValidationRequired | string }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Channel</dt>
+        <dd class="govuk-summary-list__value">{{ production.channel or 'web' }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">PKCE enforced</dt>
+        <dd class="govuk-summary-list__value">{{ production.enforcePKCE | string }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Max age enabled</dt>
+        <dd class="govuk-summary-list__value">{{ production.maxAgeEnabled | string }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Permit missing nonce</dt>
+        <dd class="govuk-summary-list__value">{{ production.permitMissingNonce | string }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Rate limit</dt>
+        <dd class="govuk-summary-list__value">{{ production.rateLimit or '2000' }} per minute</dd>
+      </div>
+    </div>
+  </div>
+</details>
 
 <script>
 const integration = {{ integration | dump | safe }};
@@ -197,7 +399,7 @@ function copyField(field, env) {
   const data = env === 'integration' ? integration : production;
   let value = data[field];
   if (Array.isArray(value)) {
-    value = value.join('\n');  // For arrays like URIs, join with newlines for readability
+    value = value.join('\n');
   }
   navigator.clipboard.writeText(value).then(() => {
     alert(`${field} copied to clipboard!`);

@@ -1,0 +1,53 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Change {{ fieldLabel }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back",
+    href: backLink
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="post" action="{% if serviceUid %}/services/{{ serviceUid }}/client-configuration/change/{{ field }}{% else %}/client-configuration/change/{{ field }}{% endif %}">
+
+        {% if warning %}
+          {{ govukWarningText({
+            text: warning,
+            iconFallbackText: "Warning"
+          }) }}
+        {% endif %}
+
+        {% set radioItems = [] %}
+        {% for item in items %}
+          {% set radioItems = (radioItems.push({
+            value: item.value,
+            text: item.text,
+            checked: (item.value == value)
+          }), radioItems) %}
+        {% endfor %}
+
+        {{ govukRadios({
+          name: "value",
+          fieldset: {
+            legend: {
+              text: fieldLabel,
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          items: radioItems
+        }) }}
+
+        {{ govukButton({
+          text: "Save"
+        }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

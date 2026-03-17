@@ -14,6 +14,21 @@ function generateUUID() {
 	return crypto.randomUUID()
 }
 
+// New fields from upstream
+const newFieldDefaults = {
+	publicKeyType: 'JWKS',
+	identityVerificationSupported: true,
+	claims: ['https://vocab.account.gov.uk/v1/coreIdentityJWT', 'https://vocab.account.gov.uk/v1/address'],
+	levelsOfConfidence: ['P2'],
+	isActive: true,
+	backChannelLogoutUris: [],
+	serviceType: 'MANDATORY',
+	jarValidationRequired: true,
+	channel: 'web',
+	permitMissingNonce: false,
+	rateLimit: '2000'
+}
+
 // Production data is read-only and static for the prototype
 const production = {
 	name: "Mark's test service 2 (production)",
@@ -29,7 +44,8 @@ const production = {
 	enforcePKCE: false,
 	authMethod: 'private_key_jwt',
 	publicKey: '-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----',
-	idTokenAlg: 'ES256'
+	idTokenAlg: 'ES256',
+	...newFieldDefaults
 }
 
 // Clients comparison: Integration (editable via 'Change' links) vs Production (read-only)
@@ -50,7 +66,8 @@ router.get('/client-configuration', function (req, res) {
 			enforcePKCE: false,
 			authMethod: 'private_key_jwt',
 			publicKey: '',
-			idTokenAlg: 'ES256'
+			idTokenAlg: 'ES256',
+			...newFieldDefaults
 		}
 	}
 
@@ -67,7 +84,8 @@ router.get('/client-configuration/change/:field', function (req, res) {
 	// URI fields use the add/remove pattern
 	const uriFields = {
 		redirectUris: 'Redirect URIs',
-		postLogoutRedirectUris: 'Post logout redirect URIs'
+		postLogoutRedirectUris: 'Post logout redirect URIs',
+		backChannelLogoutUris: 'Back channel logout URIs'
 	}
 	if (uriFields[field]) {
 		return res.render('clients-change-urls', {
@@ -80,14 +98,57 @@ router.get('/client-configuration/change/:field', function (req, res) {
 		})
 	}
 
+	// Radio fields use a dedicated template
+	const radioFields = {
+		authMethod: { label: 'Token authentication method', items: [{value: 'private_key_jwt', text: 'Private key JWT'}, {value: 'client_secret_post', text: 'Client secret post'}] },
+		idTokenAlg: { label: 'ID token signing algorithm', items: [{value: 'ES256', text: 'ES256'}, {value: 'RS256', text: 'RS256'}] },
+		identityVerificationSupported: { label: 'Is your service using identity verification?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}] },
+		isActive: { label: 'Is your service active?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}], warning: 'Disabling this will stop all One Login journeys' },
+		jarValidationRequired: { label: 'Does your service require JAR validation?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}], warning: 'If set to false, even if you send JAR malicious party could send query params' },
+		enforcePKCE: { label: 'Is PKCE enforced?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}] },
+		maxAgeEnabled: { label: 'Is max age enabled?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}] },
+		permitMissingNonce: { label: 'Allow missing nonce?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}] },
+		serviceType: { label: 'Which service type?', items: [{value: 'MANDATORY', text: 'Mandatory'}, {value: 'OPTIONAL', text: 'Optional'}] },
+		channel: { label: 'What channel?', items: [{value: 'none', text: 'None'}, {value: 'web', text: 'Web'}, {value: 'app', text: 'Generic app'}] },
+		publicKeyType: { label: 'How will your service authenticate with OneLogin?', items: [{value: 'JWKS URL', text: 'Public key URL (JWKS) - Recommended'}, {value: 'Static Key', text: 'Upload a public key'}, {value: 'Client Secret', text: 'Client secret'}] }
+	}
+	if (radioFields[field]) {
+		const cfg = radioFields[field]
+		return res.render('clients-change-radio', {
+			field: field,
+			fieldLabel: cfg.label,
+			items: cfg.items,
+			warning: cfg.warning,
+			value: String(integration[field]),
+			backLink: '/client-configuration'
+		})
+	}
+
+	// Checkbox fields
+	const checkboxFields = {
+		scopes: { label: 'Which scope(s) does your service require?', items: [{value: 'openid', text: 'Openid', disabled: true, checked: true}, {value: 'email', text: 'Email address'}, {value: 'phone', text: 'Phone number'}, {value: 'wallet_subject_id', text: 'Wallet subject ID'}] },
+		claims: { label: 'Which claim(s) does your service require?', items: [{value: 'https://vocab.account.gov.uk/v1/coreIdentityJWT', text: 'Core Identity', disabled: true, checked: true}, {value: 'https://vocab.account.gov.uk/v1/passport', text: 'Passport'}, {value: 'https://vocab.account.gov.uk/v1/address', text: 'Address'}, {value: 'https://vocab.account.gov.uk/v1/drivingPermit', text: 'Driving Permit'}, {value: 'https://vocab.account.gov.uk/v1/returnCode', text: 'Return Code'}] },
+		levelsOfConfidence: { label: 'Which level(s) of confidence does your service require?', items: [{value: 'P0', text: 'P0'}, {value: 'P1', text: 'P1'}, {value: 'P2', text: 'P2'}, {value: 'P3', text: 'P3'}] }
+	}
+	if (checkboxFields[field]) {
+		const cfg = checkboxFields[field]
+		return res.render('clients-change-checkbox', {
+			field: field,
+			fieldLabel: cfg.label,
+			items: cfg.items,
+			selected: integration[field] || [],
+			backLink: '/client-configuration'
+		})
+	}
+
 	const fieldConfig = {
 		name: { label: 'Name', type: 'text' },
 		clientId: { label: 'Client ID', type: 'text' },
 		contacts: { label: 'Contacts', type: 'text' },
-		scopes: { label: 'Scopes (comma separated)', type: 'text' },
-		authMethod: { label: 'Authentication method', type: 'text' },
-		idTokenAlg: { label: 'ID token signing algorithm', type: 'text' },
-		publicKey: { label: 'Public key', type: 'textarea' }
+		publicKey: { label: 'Public key', type: 'textarea' },
+		landingPageUri: { label: 'Landing page URL', type: 'text' },
+		sectorIdentifierUri: { label: 'Sector identifier URI', type: 'text' },
+		rateLimit: { label: 'Rate limit (per minute)', type: 'text' }
 	}
 
 	const cfg = fieldConfig[field]
@@ -129,11 +190,24 @@ router.post('/client-configuration/change/:field', function (req, res) {
 	const body = req.body || {}
 	const integration = req.session.integration || {}
 
-	let newValue = body.value || ''
-	if (field === 'scopes') {
-		integration[field] = newValue.split(',').map(s => s.trim()).filter(Boolean)
+	let newValue = body.value !== undefined ? body.value : ''
+
+	// Array fields from checkboxes
+	const arrayFields = ['scopes', 'claims', 'levelsOfConfidence']
+	if (arrayFields.includes(field)) {
+		if (body.selectedItems) {
+			integration[field] = Array.isArray(body.selectedItems) ? body.selectedItems : [body.selectedItems]
+		} else {
+			integration[field] = newValue.split(',').map(s => s.trim()).filter(Boolean)
+		}
 	} else {
-		integration[field] = newValue
+		// Boolean fields
+		const boolFields = ['identityVerificationSupported', 'isActive', 'jarValidationRequired', 'enforcePKCE', 'maxAgeEnabled', 'permitMissingNonce']
+		if (boolFields.includes(field)) {
+			integration[field] = newValue === 'true'
+		} else {
+			integration[field] = newValue
+		}
 	}
 
 	req.session.integration = integration
@@ -163,7 +237,8 @@ router.get('/settings', function (req, res) {
 			enforcePKCE: false,
 			authMethod: 'private_key_jwt',
 			publicKey: '',
-			idTokenAlg: 'ES256'
+			idTokenAlg: 'ES256',
+			...newFieldDefaults
 		}
 	}
 
@@ -340,7 +415,8 @@ router.post('/services/create/confirm', function (req, res) {
 			enforcePKCE: true,
 			authMethod: authMethod,
 			publicKey: publicKey,
-			idTokenAlg: 'ES256'
+			idTokenAlg: 'ES256',
+			...newFieldDefaults
 		},
 		production: {
 			name: serviceName + ' (production)',
@@ -356,7 +432,8 @@ router.post('/services/create/confirm', function (req, res) {
 			enforcePKCE: true,
 			authMethod: 'private_key_jwt',
 			publicKey: '',
-			idTokenAlg: 'ES256'
+			idTokenAlg: 'ES256',
+			...newFieldDefaults
 		},
 		goLiveChecklist: {
 			integrationComplete: false,
@@ -423,7 +500,8 @@ router.get('/services/:uid/client-configuration/change/:field', function (req, r
 	// URI fields use the add/remove pattern
 	const uriFields = {
 		redirectUris: 'Redirect URIs',
-		postLogoutRedirectUris: 'Post logout redirect URIs'
+		postLogoutRedirectUris: 'Post logout redirect URIs',
+		backChannelLogoutUris: 'Back channel logout URIs'
 	}
 	if (uriFields[field]) {
 		return res.render('clients-change-urls', {
@@ -437,14 +515,59 @@ router.get('/services/:uid/client-configuration/change/:field', function (req, r
 		})
 	}
 
+	// Radio fields
+	const radioFields = {
+		authMethod: { label: 'Token authentication method', items: [{value: 'private_key_jwt', text: 'Private key JWT'}, {value: 'client_secret_post', text: 'Client secret post'}] },
+		idTokenAlg: { label: 'ID token signing algorithm', items: [{value: 'ES256', text: 'ES256'}, {value: 'RS256', text: 'RS256'}] },
+		identityVerificationSupported: { label: 'Is your service using identity verification?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}] },
+		isActive: { label: 'Is your service active?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}], warning: 'Disabling this will stop all One Login journeys' },
+		jarValidationRequired: { label: 'Does your service require JAR validation?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}], warning: 'If set to false, even if you send JAR malicious party could send query params' },
+		enforcePKCE: { label: 'Is PKCE enforced?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}] },
+		maxAgeEnabled: { label: 'Is max age enabled?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}] },
+		permitMissingNonce: { label: 'Allow missing nonce?', items: [{value: 'true', text: 'Yes'}, {value: 'false', text: 'No'}] },
+		serviceType: { label: 'Which service type?', items: [{value: 'MANDATORY', text: 'Mandatory'}, {value: 'OPTIONAL', text: 'Optional'}] },
+		channel: { label: 'What channel?', items: [{value: 'none', text: 'None'}, {value: 'web', text: 'Web'}, {value: 'app', text: 'Generic app'}] },
+		publicKeyType: { label: 'How will your service authenticate with OneLogin?', items: [{value: 'JWKS URL', text: 'Public key URL (JWKS) - Recommended'}, {value: 'Static Key', text: 'Upload a public key'}, {value: 'Client Secret', text: 'Client secret'}] }
+	}
+	if (radioFields[field]) {
+		const cfg = radioFields[field]
+		return res.render('clients-change-radio', {
+			field: field,
+			fieldLabel: cfg.label,
+			items: cfg.items,
+			warning: cfg.warning,
+			value: String(integration[field]),
+			backLink: backLink,
+			serviceUid: uid
+		})
+	}
+
+	// Checkbox fields
+	const checkboxFields = {
+		scopes: { label: 'Which scope(s) does your service require?', items: [{value: 'openid', text: 'Openid', disabled: true, checked: true}, {value: 'email', text: 'Email address'}, {value: 'phone', text: 'Phone number'}, {value: 'wallet_subject_id', text: 'Wallet subject ID'}] },
+		claims: { label: 'Which claim(s) does your service require?', items: [{value: 'https://vocab.account.gov.uk/v1/coreIdentityJWT', text: 'Core Identity', disabled: true, checked: true}, {value: 'https://vocab.account.gov.uk/v1/passport', text: 'Passport'}, {value: 'https://vocab.account.gov.uk/v1/address', text: 'Address'}, {value: 'https://vocab.account.gov.uk/v1/drivingPermit', text: 'Driving Permit'}, {value: 'https://vocab.account.gov.uk/v1/returnCode', text: 'Return Code'}] },
+		levelsOfConfidence: { label: 'Which level(s) of confidence does your service require?', items: [{value: 'P0', text: 'P0'}, {value: 'P1', text: 'P1'}, {value: 'P2', text: 'P2'}, {value: 'P3', text: 'P3'}] }
+	}
+	if (checkboxFields[field]) {
+		const cfg = checkboxFields[field]
+		return res.render('clients-change-checkbox', {
+			field: field,
+			fieldLabel: cfg.label,
+			items: cfg.items,
+			selected: integration[field] || [],
+			backLink: backLink,
+			serviceUid: uid
+		})
+	}
+
 	const fieldConfig = {
 		name: { label: 'Name', type: 'text' },
 		clientId: { label: 'Client ID', type: 'text' },
 		contacts: { label: 'Contacts', type: 'text' },
-		scopes: { label: 'Scopes (comma separated)', type: 'text' },
-		authMethod: { label: 'Authentication method', type: 'text' },
-		idTokenAlg: { label: 'ID token signing algorithm', type: 'text' },
-		publicKey: { label: 'Public key', type: 'textarea' }
+		publicKey: { label: 'Public key', type: 'textarea' },
+		landingPageUri: { label: 'Landing page URL', type: 'text' },
+		sectorIdentifierUri: { label: 'Sector identifier URI', type: 'text' },
+		rateLimit: { label: 'Rate limit (per minute)', type: 'text' }
 	}
 
 	const cfg = fieldConfig[field]
@@ -501,11 +624,22 @@ router.post('/services/:uid/client-configuration/change/:field', function (req, 
 	const service = req.session.userServices[uid]
 	const integration = service.integration
 
-	let newValue = body.value || ''
-	if (field === 'scopes') {
-		integration[field] = newValue.split(',').map(s => s.trim()).filter(Boolean)
+	let newValue = body.value !== undefined ? body.value : ''
+
+	const arrayFields = ['scopes', 'claims', 'levelsOfConfidence']
+	if (arrayFields.includes(field)) {
+		if (body.selectedItems) {
+			integration[field] = Array.isArray(body.selectedItems) ? body.selectedItems : [body.selectedItems]
+		} else {
+			integration[field] = newValue.split(',').map(s => s.trim()).filter(Boolean)
+		}
 	} else {
-		integration[field] = newValue
+		const boolFields = ['identityVerificationSupported', 'isActive', 'jarValidationRequired', 'enforcePKCE', 'maxAgeEnabled', 'permitMissingNonce']
+		if (boolFields.includes(field)) {
+			integration[field] = newValue === 'true'
+		} else {
+			integration[field] = newValue
+		}
 	}
 
 	res.redirect(`/services/${uid}/client-configuration?saved=true`)
@@ -603,7 +737,8 @@ router.get('/client-configuration', function (req, res) {
 				enforcePKCE: true,
 				authMethod: 'private_key_jwt',
 				publicKey: '',
-				idTokenAlg: 'ES256'
+				idTokenAlg: 'ES256',
+				...newFieldDefaults
 			},
 			production: {
 				name: "Default Service (production)",
@@ -619,7 +754,8 @@ router.get('/client-configuration', function (req, res) {
 				enforcePKCE: true,
 				authMethod: 'private_key_jwt',
 				publicKey: '',
-				idTokenAlg: 'ES256'
+				idTokenAlg: 'ES256',
+				...newFieldDefaults
 			},
 			goLiveChecklist: {
 				integrationComplete: false,
@@ -872,7 +1008,8 @@ router.get('/client-configuration/change/:field', function (req, res) {
 				enforcePKCE: true,
 				authMethod: 'private_key_jwt',
 				publicKey: '',
-				idTokenAlg: 'ES256'
+				idTokenAlg: 'ES256',
+				...newFieldDefaults
 			},
 			production: {
 				name: "Default Service (production)",
@@ -888,7 +1025,8 @@ router.get('/client-configuration/change/:field', function (req, res) {
 				enforcePKCE: true,
 				authMethod: 'private_key_jwt',
 				publicKey: '',
-				idTokenAlg: 'ES256'
+				idTokenAlg: 'ES256',
+				...newFieldDefaults
 			},
 			goLiveChecklist: {
 				integrationComplete: false,
