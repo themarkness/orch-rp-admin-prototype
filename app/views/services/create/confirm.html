@@ -86,12 +86,9 @@
           Redirect url(s)
         </dt>
         <dd class="govuk-summary-list__value">
-          {% if data['redirectUrls'].length > 0 %}
-            {% set urlList = data['redirectUrls'].split(',') %}
-            {% for url in urlList %}
-              {{ url | trim }}<br>
-            {% endfor %}
-          {% endif %}
+          {% for url in data['redirectUrlsList'] %}
+            {{ url }}<br>
+          {% endfor %}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link" href="/services/create/redirect-urls">Change<span class="govuk-visually-hidden"> redirect urls</span></a>
@@ -103,11 +100,11 @@
         </dt>
         <dd class="govuk-summary-list__value">
           OpenID
-          {% if data['selectedScopes'].length > 0 %}
-            {% for scope in data['selectedScopes'] %}
+          {% for scope in data['selectedScopes'] %}
+            {% if scope | trim !== 'openid' and scope | trim !== '_unchecked' %}
               <br>{{ scope | trim }}
-            {% endfor %}
-          {% endif %}
+            {% endif %}
+          {% endfor %}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link" href="/services/create/select-scopes">Change<span class="govuk-visually-hidden"> scopes</span></a>

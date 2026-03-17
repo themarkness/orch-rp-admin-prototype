@@ -64,13 +64,26 @@ router.get('/client-configuration/change/:field', function (req, res) {
 	const field = req.params.field
 	const integration = req.session.integration || {}
 
-	// Provide a label and input type per field
+	// URI fields use the add/remove pattern
+	const uriFields = {
+		redirectUris: 'Redirect URIs',
+		postLogoutRedirectUris: 'Post logout redirect URIs'
+	}
+	if (uriFields[field]) {
+		return res.render('clients-change-urls', {
+			field: field,
+			fieldLabel: uriFields[field],
+			urls: integration[field] || [],
+			addAction: '/client-configuration/change/' + field + '/add',
+			removeBasePath: '/client-configuration/change/' + field + '/remove',
+			backLink: '/client-configuration'
+		})
+	}
+
 	const fieldConfig = {
 		name: { label: 'Name', type: 'text' },
 		clientId: { label: 'Client ID', type: 'text' },
 		contacts: { label: 'Contacts', type: 'text' },
-		redirectUris: { label: 'Redirect URIs (one per line)', type: 'textarea' },
-		postLogoutRedirectUris: { label: 'Post logout redirect URIs (one per line)', type: 'textarea' },
 		scopes: { label: 'Scopes (comma separated)', type: 'text' },
 		authMethod: { label: 'Authentication method', type: 'text' },
 		idTokenAlg: { label: 'ID token signing algorithm', type: 'text' },
@@ -84,14 +97,31 @@ router.get('/client-configuration/change/:field', function (req, res) {
 
 	let value = integration[field]
 	if (Array.isArray(value)) {
-		if (field === 'redirectUris' || field === 'postLogoutRedirectUris') {
-			value = value.join('\n')
-		} else {
-			value = value.join(', ')
-		}
+		value = value.join(', ')
 	}
 
 	res.render('clients-change', { field: field, fieldLabel: cfg.label, fieldType: cfg.type, value: value })
+})
+
+// Add/remove URLs for URI fields (old client-configuration)
+router.post('/client-configuration/change/:field/add', function (req, res) {
+	const field = req.params.field
+	const integration = req.session.integration || {}
+	if (!integration[field]) integration[field] = []
+	const url = (req.body.newUrl || '').trim()
+	if (url) integration[field].push(url)
+	req.session.integration = integration
+	res.redirect('/client-configuration/change/' + field)
+})
+
+router.get('/client-configuration/change/:field/remove/:index', function (req, res) {
+	const field = req.params.field
+	const integration = req.session.integration || {}
+	const list = integration[field] || []
+	const i = parseInt(req.params.index, 10)
+	if (i >= 0 && i < list.length) list.splice(i, 1)
+	req.session.integration = integration
+	res.redirect('/client-configuration/change/' + field)
 })
 
 router.post('/client-configuration/change/:field', function (req, res) {
@@ -100,9 +130,7 @@ router.post('/client-configuration/change/:field', function (req, res) {
 	const integration = req.session.integration || {}
 
 	let newValue = body.value || ''
-	if (field === 'redirectUris' || field === 'postLogoutRedirectUris') {
-		integration[field] = newValue.split('\n').map(s => s.trim()).filter(Boolean)
-	} else if (field === 'scopes') {
+	if (field === 'scopes') {
 		integration[field] = newValue.split(',').map(s => s.trim()).filter(Boolean)
 	} else {
 		integration[field] = newValue
@@ -208,12 +236,36 @@ router.post('/services/create/select-key-type', function (req, res) {
 
 // Step 3: Redirect URLs
 router.get('/services/create/redirect-urls', function (req, res) {
+	req.session.data = req.session.data || {}
+	if (!req.session.data.redirectUrlsList) {
+		req.session.data.redirectUrlsList = []
+	}
 	res.render('services/create/redirect-urls')
 })
 
-router.post('/services/create/redirect-urls', function (req, res) {
+router.post('/services/create/redirect-urls/add', function (req, res) {
 	req.session.data = req.session.data || {}
-	req.session.data.redirectUrls = req.body.redirectUrls
+	if (!req.session.data.redirectUrlsList) {
+		req.session.data.redirectUrlsList = []
+	}
+	const url = (req.body.newRedirectUrl || '').trim()
+	if (url) {
+		req.session.data.redirectUrlsList.push(url)
+	}
+	res.redirect('/services/create/redirect-urls')
+})
+
+router.get('/services/create/redirect-urls/remove/:index', function (req, res) {
+	req.session.data = req.session.data || {}
+	const list = req.session.data.redirectUrlsList || []
+	const i = parseInt(req.params.index, 10)
+	if (i >= 0 && i < list.length) {
+		list.splice(i, 1)
+	}
+	res.redirect('/services/create/redirect-urls')
+})
+
+router.post('/services/create/redirect-urls', function (req, res) {
 	res.redirect('/services/create/select-scopes')
 })
 
@@ -256,9 +308,7 @@ router.post('/services/create/confirm', function (req, res) {
 	}
 
 	// Parse redirect URLs
-	const redirectUrls = req.session.data.redirectUrls 
-		? req.session.data.redirectUrls.split(',').map(s => s.trim()).filter(Boolean)
-		: []
+	const redirectUrls = req.session.data.redirectUrlsList || []
 
 	// Determine auth method and public key
 	let authMethod = 'private_key_jwt'
@@ -368,14 +418,29 @@ router.get('/services/:uid/client-configuration/change/:field', function (req, r
 
 	const service = req.session.userServices[uid]
 	const integration = service.integration
+	const backLink = `/services/${uid}/client-configuration`
 
-	// Provide a label and input type per field
+	// URI fields use the add/remove pattern
+	const uriFields = {
+		redirectUris: 'Redirect URIs',
+		postLogoutRedirectUris: 'Post logout redirect URIs'
+	}
+	if (uriFields[field]) {
+		return res.render('clients-change-urls', {
+			field: field,
+			fieldLabel: uriFields[field],
+			urls: integration[field] || [],
+			addAction: `/services/${uid}/client-configuration/change/${field}/add`,
+			removeBasePath: `/services/${uid}/client-configuration/change/${field}/remove`,
+			backLink: backLink,
+			serviceUid: uid
+		})
+	}
+
 	const fieldConfig = {
 		name: { label: 'Name', type: 'text' },
 		clientId: { label: 'Client ID', type: 'text' },
 		contacts: { label: 'Contacts', type: 'text' },
-		redirectUris: { label: 'Redirect URIs (one per line)', type: 'textarea' },
-		postLogoutRedirectUris: { label: 'Post logout redirect URIs (one per line)', type: 'textarea' },
 		scopes: { label: 'Scopes (comma separated)', type: 'text' },
 		authMethod: { label: 'Authentication method', type: 'text' },
 		idTokenAlg: { label: 'ID token signing algorithm', type: 'text' },
@@ -384,16 +449,12 @@ router.get('/services/:uid/client-configuration/change/:field', function (req, r
 
 	const cfg = fieldConfig[field]
 	if (!cfg) {
-		return res.redirect(`/services/${uid}/client-configuration`)
+		return res.redirect(backLink)
 	}
 
 	let value = integration[field]
 	if (Array.isArray(value)) {
-		if (field === 'redirectUris' || field === 'postLogoutRedirectUris') {
-			value = value.join('\n')
-		} else {
-			value = value.join(', ')
-		}
+		value = value.join(', ')
 	}
 
 	res.render('clients-change', {
@@ -403,6 +464,29 @@ router.get('/services/:uid/client-configuration/change/:field', function (req, r
 		value: value,
 		serviceUid: uid
 	})
+})
+
+// Add/remove URLs for URI fields (service-specific)
+router.post('/services/:uid/client-configuration/change/:field/add', function (req, res) {
+	const uid = req.params.uid
+	const field = req.params.field
+	const service = req.session.userServices[uid]
+	if (!service) return res.redirect('/services')
+	if (!service.integration[field]) service.integration[field] = []
+	const url = (req.body.newUrl || '').trim()
+	if (url) service.integration[field].push(url)
+	res.redirect(`/services/${uid}/client-configuration/change/${field}`)
+})
+
+router.get('/services/:uid/client-configuration/change/:field/remove/:index', function (req, res) {
+	const uid = req.params.uid
+	const field = req.params.field
+	const service = req.session.userServices[uid]
+	if (!service) return res.redirect('/services')
+	const list = service.integration[field] || []
+	const i = parseInt(req.params.index, 10)
+	if (i >= 0 && i < list.length) list.splice(i, 1)
+	res.redirect(`/services/${uid}/client-configuration/change/${field}`)
 })
 
 router.post('/services/:uid/client-configuration/change/:field', function (req, res) {
@@ -418,9 +502,7 @@ router.post('/services/:uid/client-configuration/change/:field', function (req, 
 	const integration = service.integration
 
 	let newValue = body.value || ''
-	if (field === 'redirectUris' || field === 'postLogoutRedirectUris') {
-		integration[field] = newValue.split('\n').map(s => s.trim()).filter(Boolean)
-	} else if (field === 'scopes') {
+	if (field === 'scopes') {
 		integration[field] = newValue.split(',').map(s => s.trim()).filter(Boolean)
 	} else {
 		integration[field] = newValue

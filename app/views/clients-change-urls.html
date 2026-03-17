@@ -1,0 +1,66 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Change {{ fieldLabel }} – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <a class="govuk-back-link" href="{{ backLink }}">Back</a>
+
+      <h1 class="govuk-heading-l">{{ fieldLabel }}</h1>
+
+      <p class="govuk-body">You are editing the Integration value only. Production remains read-only.</p>
+
+      {% if urls.length > 0 %}
+        <table class="govuk-table">
+          <caption class="govuk-table__caption govuk-table__caption--s">Current URLs</caption>
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">URL</th>
+              <th scope="col" class="govuk-table__header">Action</th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            {% for url in urls %}
+              <tr class="govuk-table__row">
+                <td class="govuk-table__cell" style="word-break: break-all;">{{ url }}</td>
+                <td class="govuk-table__cell">
+                  <a class="govuk-link" href="{{ removeBasePath }}/{{ loop.index0 }}">Remove<span class="govuk-visually-hidden"> {{ url }}</span></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+
+      <form method="post" action="{{ addAction }}">
+        {{ govukInput({
+          name: "newUrl",
+          id: "new-url",
+          label: {
+            text: "URL",
+            classes: "govuk-label--s"
+          },
+          hint: {
+            text: "For example, https://your-service.gov.uk/callback"
+          },
+          classes: "govuk-!-width-two-thirds",
+          type: "url"
+        }) }}
+
+        {{ govukButton({
+          text: "Add URL",
+          classes: "govuk-button--secondary"
+        }) }}
+      </form>
+
+      <div class="govuk-button-group">
+        <a class="govuk-button" href="{{ backLink }}?saved=1">Save and go back</a>
+        <a class="govuk-link" href="{{ backLink }}">Cancel</a>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
